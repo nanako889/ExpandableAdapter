@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        >
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/add_header_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="add header" />
+
+            <Button
+                android:id="@+id/remove_header_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="remove header" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/add_child_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="add child" />
+
+            <Button
+                android:id="@+id/remove_child_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="remove child" />
+
+            <EditText
+                android:id="@+id/childEt"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/add_group_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="add group" />
+
+            <Button
+                android:id="@+id/remove_group_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="remove group" />
+
+            <EditText
+                android:id="@+id/groupEt"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="88dp">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/add_group_child_btn"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="add group child" />
+
+            <Button
+                android:id="@+id/remove_group_child_btn"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="remove group child" />
+
+            <EditText
+                android:id="@+id/groupChildGEt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <EditText
+                android:id="@+id/groupChildCEt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/add_footer_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="add footer" />
+
+            <Button
+                android:id="@+id/remove_footer_btn"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="remove footer" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp">
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/remove_item_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="remove item" />
+
+            <EditText
+                android:id="@+id/item_et"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </TableRow>
+
+    </TableLayout>
+</LinearLayout>
