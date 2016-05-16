@@ -6,7 +6,7 @@
 
 
 
-![image](https://github.com/qbwjly/ExpandableAdapter/raw/master/screenshots/ExpandableAdapter.gif)
+![image](https://github.com/qbaowei/ExpandableAdapter/raw/master/screenshots/ExpandableAdapter.gif)
 
 # Download
 
