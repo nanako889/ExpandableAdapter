@@ -18,7 +18,6 @@ import com.example.qbw.expandableadapter.holder.GroupItemViewHolder;
 import com.example.qbw.expandableadapter.holder.GroupViewHolder;
 import com.example.qbw.expandableadapter.holder.HeaderViewHolder;
 import com.example.qbw.expandableadapter.holder.ItemViewHolder;
-import com.qbw.recyclerview.base.BaseViewHolder;
 import com.qbw.recyclerview.expandable.ExpandableAdapter;
 
 /**
@@ -56,6 +55,12 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
                 break;
         }
         return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        BaseViewHolder viewHolder = (BaseViewHolder) holder;
+        viewHolder.bindData(position, getItem(position));
     }
 
     @Override

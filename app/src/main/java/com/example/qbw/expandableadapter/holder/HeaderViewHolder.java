@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.example.qbw.expandableadapter.R;
 import com.example.qbw.expandableadapter.entity.Header;
-import com.qbw.recyclerview.base.BaseViewHolder;
+import com.example.qbw.expandableadapter.BaseViewHolder;
 
 /**
  * @author QBW

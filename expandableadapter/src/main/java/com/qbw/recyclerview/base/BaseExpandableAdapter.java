@@ -2,7 +2,6 @@ package com.qbw.recyclerview.base;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
 
 import com.qbw.log.XLog;
 
@@ -16,19 +15,11 @@ import com.qbw.log.XLog;
  * ----------------......(Group+GroupChild)
  * ----------------Footer
  */
-public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<BaseViewHolder<T>> {
+public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     protected Context context;
 
     public BaseExpandableAdapter(Context context) {
         this.context = context;
-    }
-
-    @Override
-    public abstract BaseViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType);
-
-    @Override
-    public void onBindViewHolder(BaseViewHolder<T> holder, int position) {
-        holder.bindData(position, getItem(position));
     }
 
     @Override

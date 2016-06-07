@@ -3,11 +3,9 @@ package com.qbw.recyclerview.expandable;
 import android.content.Context;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
 
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.base.BaseExpandableAdapter;
-import com.qbw.recyclerview.base.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,9 +32,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         groupChildMap = new HashMap<>();
         footerList = new ArrayList<>();
     }
-
-    @Override
-    public abstract BaseViewHolder<T> onCreateViewHolder(ViewGroup parent, int viewType);
 
     @Override
     public T getItem(int adapPos) {

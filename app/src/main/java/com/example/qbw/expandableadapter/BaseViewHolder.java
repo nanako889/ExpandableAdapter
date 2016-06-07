@@ -1,4 +1,4 @@
-package com.qbw.recyclerview.base;
+package com.example.qbw.expandableadapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
