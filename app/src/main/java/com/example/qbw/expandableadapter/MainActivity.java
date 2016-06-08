@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.qbw.expandableadapter.entity.BaseEntity;
 import com.example.qbw.expandableadapter.entity.Child;
 import com.example.qbw.expandableadapter.entity.Footer;
 import com.example.qbw.expandableadapter.entity.Group;
@@ -13,6 +14,9 @@ import com.example.qbw.expandableadapter.entity.GroupChild;
 import com.example.qbw.expandableadapter.entity.Header;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.StickyLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -57,9 +61,17 @@ public class MainActivity extends Activity implements TestDialog.Listener {
         onAddHeader();
 //        onAddHeader();
 //        onAddHeader();
-//        onAddChild();
-//        onAddChild();
-//        onAddChild();
+        onAddChild();
+        onAddChild();
+        onAddChild();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                onAddChildList();
+            }
+        }, 3000);
+
         onAddGroup();
         onAddGroupChild(0);
         onAddGroupChild(0);
@@ -133,6 +145,28 @@ public class MainActivity extends Activity implements TestDialog.Listener {
                 adapter.updateChild(adapter.getChildCount() - 1, child);
             }
         }, 1000);
+    }
+
+    public void onAddChildList() {
+        List<BaseEntity> childList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            childList.add(new Child("child list " + i));
+        }
+        adapter.addChild(childList);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.removeChild(0, 3);
+            }
+        }, 3000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.removeAllChild();
+            }
+        }, 6000);
     }
 
     @Override

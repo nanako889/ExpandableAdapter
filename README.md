@@ -14,7 +14,7 @@
 Gradle:
 
 
-compile 'com.qbw.recyclerview:expandableadapter:2.1.0'
+compile 'com.qbw.recyclerview:expandableadapter:2.2.0'
 
 
 # Author:

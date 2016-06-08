@@ -10,6 +10,7 @@ import com.qbw.log.XLog;
 /**
  * @author qbw
  * @createtime 2016/04/22 16:02
+ * 悬浮的group布局
  */
 
 
