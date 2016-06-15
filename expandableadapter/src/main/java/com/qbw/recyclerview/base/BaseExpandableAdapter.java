@@ -16,10 +16,10 @@ import com.qbw.log.XLog;
  * ----------------Footer
  */
 public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    protected Context context;
+    protected Context mContext;
 
     public BaseExpandableAdapter(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     @Override

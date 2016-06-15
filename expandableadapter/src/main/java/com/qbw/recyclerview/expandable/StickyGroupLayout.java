@@ -15,8 +15,8 @@ import com.qbw.log.XLog;
 
 
 class StickyGroupLayout extends FrameLayout {
-    private int groupPos = -1;
-    private RecyclerView.ViewHolder groupViewHolder;
+    private int mGroupPos = -1;
+    private RecyclerView.ViewHolder mGroupViewHolder;
 
     public StickyGroupLayout(Context context) {
         super(context);
@@ -32,12 +32,12 @@ class StickyGroupLayout extends FrameLayout {
 
     public void addGroupViewHolder(int groupPos, RecyclerView.ViewHolder groupViewHolder) {
         if (getChildCount() > 0) {
-            XLog.d("Sticky group layout contains group[%d] view", this.groupPos);
+            XLog.d("Sticky group layout contains group[%d] view", mGroupPos);
             return;
         }
-        this.groupPos = groupPos;
-        this.groupViewHolder = groupViewHolder;
-        this.addView(groupViewHolder.itemView, 0);
+        mGroupPos = groupPos;
+        mGroupViewHolder = groupViewHolder;
+        addView(groupViewHolder.itemView, 0);
         XLog.d("Add group view, group position[%d]", groupPos);
     }
 
@@ -48,27 +48,27 @@ class StickyGroupLayout extends FrameLayout {
         }
         XLog.d("Remove group view");
         removeAllViews();
-        groupPos = -1;
-        groupViewHolder = null;
+        mGroupPos = -1;
+        mGroupViewHolder = null;
     }
 
     public RecyclerView.ViewHolder getGroupViewHolder() {
-        return groupViewHolder;
+        return mGroupViewHolder;
     }
 
     public void bindGroupViewHolder(int groupPos, ExpandableAdapter expandableAdapter) {
-        if (null == groupViewHolder) {
+        if (null == mGroupViewHolder) {
             return;
         }
-        this.groupPos = groupPos;
-        expandableAdapter.bindStickyGroupData(groupPos, groupViewHolder);
+        mGroupPos = groupPos;
+        expandableAdapter.bindStickyGroupData(groupPos, mGroupViewHolder);
     }
 
     public int getGroupPos() {
-        return groupPos;
+        return mGroupPos;
     }
 
-//    public void setGroupPos(int groupPos) {
-//        this.groupPos = groupPos;
+//    public void setGroupPos(int mGroupPos) {
+//        this.mGroupPos = mGroupPos;
 //    }
 }

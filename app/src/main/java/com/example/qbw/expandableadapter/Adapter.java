@@ -37,19 +37,19 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         BaseViewHolder viewHolder = null;
         switch (viewType) {
             case Type.HEADER:
-                viewHolder = new HeaderViewHolder(context, parent);
+                viewHolder = new HeaderViewHolder(mContext, parent);
                 break;
             case Type.CHILD:
-                viewHolder = new ItemViewHolder(context, parent);
+                viewHolder = new ItemViewHolder(mContext, parent);
                 break;
             case Type.GROUP:
-                viewHolder = new GroupViewHolder(context, parent);
+                viewHolder = new GroupViewHolder(mContext, parent);
                 break;
             case Type.GROUP_CHILD:
-                viewHolder = new GroupItemViewHolder(context, parent);
+                viewHolder = new GroupItemViewHolder(mContext, parent);
                 break;
             case Type.FOOTER:
-                viewHolder = new FooterViewHolder(context, parent);
+                viewHolder = new FooterViewHolder(mContext, parent);
                 break;
             default:
                 break;
@@ -65,7 +65,7 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
 
     @Override
     public RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupPosition) {
-        GroupViewHolder groupViewHolder = new GroupViewHolder(context, null);
+        GroupViewHolder groupViewHolder = new GroupViewHolder(mContext, null);
         groupViewHolder.bindData(-1, (Group) getGroup(groupPosition));
         //groupViewHolder.itemView.setAlpha(0.8f);
         //groupViewHolder.itemView.setBackgroundColor(Color.parseColor("#aabbcc"));
@@ -105,9 +105,9 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
 
     @Override
     public Point getGroupSize(int groupPosition) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
-        return new Point(display.getWidth(), (int) context.getResources().getDimension(R.dimen.group_height));
+        return new Point(display.getWidth(), (int) mContext.getResources().getDimension(R.dimen.group_height));
     }
 
     @Override
