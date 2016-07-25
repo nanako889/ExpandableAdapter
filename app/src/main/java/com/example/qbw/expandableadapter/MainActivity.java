@@ -164,7 +164,7 @@ public class MainActivity extends Activity implements TestDialog.Listener {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                adapter.removeAllChild();
+                adapter.clearChild();
             }
         }, 6000);
     }
