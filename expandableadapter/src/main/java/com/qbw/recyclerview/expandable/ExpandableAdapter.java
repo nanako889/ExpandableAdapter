@@ -147,16 +147,24 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void clearHeader() {
+        clearHeader(0);
+    }
+
+    public final void clearHeader(int beginPos) {
         int headerCount = getHeaderCount();
         if (headerCount <= 0) {
             XLog.w("header count is 0");
             return;
         }
         XLog.line(true);
-        int adapPos = convertHeaderPosition(0);
-        mList.removeAll(mHeaderList);
-        mHeaderList.clear();
-        notifyItemRangeRemoved(adapPos, headerCount);
+        if (beginPos < 0 || beginPos >= headerCount) {
+            XLog.e("invalid begin pos[%d]", beginPos);
+            return;
+        }
+        int adapPos = convertHeaderPosition(beginPos);
+        mList.subList(adapPos, headerCount).clear();
+        mHeaderList.subList(beginPos, headerCount).clear();
+        notifyItemRangeRemoved(adapPos, headerCount - beginPos);
         XLog.line(false);
     }
 
@@ -523,6 +531,24 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         int adapPos = convertFooterPosition(getFooterCount() - 1);
         mList.add(adapPos, t);
         notifyItemInserted(adapPos);
+        XLog.line(false);
+    }
+
+    public final void addFooterPosition(int position, T t) {
+        XLog.line(true);
+        int footerCount = getFooterCount();
+        if (position < 0) {
+            XLog.e("Invalid position = %d", position);
+            return;
+        }
+        if (position >= footerCount) {
+            addFooter(t);
+        } else {
+            mFooterList.add(position, t);
+            int adapPos = convertFooterPosition(position);
+            mList.add(adapPos, t);
+            notifyItemInserted(adapPos);
+        }
         XLog.line(false);
     }
 

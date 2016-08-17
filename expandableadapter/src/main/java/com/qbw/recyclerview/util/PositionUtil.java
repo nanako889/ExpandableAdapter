@@ -14,7 +14,7 @@ import com.qbw.log.XLog;
 public class PositionUtil {
 
     public static int findFirstCompletelyVisibleItemPosition(RecyclerView recyclerView) {
-        int pos = -1;
+        int pos = RecyclerView.NO_POSITION;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
             pos = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition();
@@ -25,7 +25,7 @@ public class PositionUtil {
     }
 
     public static int findFirstVisibleItemPosition(RecyclerView recyclerView) {
-        int pos = -1;
+        int pos = RecyclerView.NO_POSITION;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof LinearLayoutManager) {
             pos = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
