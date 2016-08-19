@@ -13,6 +13,8 @@
 
 
 1.需要Group悬浮,将RecyclerView包裹在'StickyLayout'里面,并且调用'stickylayout'的init函数传入参数true(true,表示group悬浮,false表示不悬浮)
+
+
 <com.qbw.recyclerview.expandable.StickyLayout
         android:id="@+id/stickylayout"
         android:layout_width="match_parent"
@@ -26,6 +28,8 @@
 
 
 2.不需要Group悬浮,可直接使用'RecyclerView'
+
+
 <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
