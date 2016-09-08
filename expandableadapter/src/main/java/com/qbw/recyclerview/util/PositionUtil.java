@@ -24,6 +24,10 @@ public class PositionUtil {
         return pos;
     }
 
+    /**
+     * 因为考虑到Group必须是一整行，所以不会对GridLayoutManager返回多个position做处理
+     */
+
     public static int findFirstVisibleItemPosition(RecyclerView recyclerView) {
         int pos = RecyclerView.NO_POSITION;
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();

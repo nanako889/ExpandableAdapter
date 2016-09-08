@@ -17,13 +17,11 @@
             android:textColor="@android:color/white" />
 
         <TextView
-            android:id="@+id/testTxt"
+            android:id="@+id/change_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="15dp"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="15dp"
-            android:text="TEST"
+            android:text="change l or g"
             android:textColor="@android:color/white" />
     </FrameLayout>
 

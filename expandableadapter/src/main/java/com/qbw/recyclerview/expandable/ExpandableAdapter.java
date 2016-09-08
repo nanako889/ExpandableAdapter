@@ -612,6 +612,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public abstract boolean isPostionGroup(int adapPos);
 
+    public abstract int getGroupItemType(int groupPos);
+
     public abstract boolean isPostionGroupChild(int adapPos);
 
     public abstract boolean isPositionFooter(int adapPos);

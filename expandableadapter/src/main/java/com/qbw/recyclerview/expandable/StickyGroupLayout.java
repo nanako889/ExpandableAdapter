@@ -15,7 +15,8 @@ import com.qbw.log.XLog;
 
 
 class StickyGroupLayout extends FrameLayout {
-    private int mGroupPos = -1;
+    private int mGroupPos = RecyclerView.NO_POSITION;
+    private int mGroupType = 0;
     private RecyclerView.ViewHolder mGroupViewHolder;
 
     public StickyGroupLayout(Context context) {
@@ -30,12 +31,18 @@ class StickyGroupLayout extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    public void addGroupViewHolder(int groupPos, RecyclerView.ViewHolder groupViewHolder) {
+    public void addGroupViewHolder(int groupPos, int groupType, RecyclerView.ViewHolder groupViewHolder) {
         if (getChildCount() > 0) {
-            XLog.d("Sticky group layout contains group[%d] view", mGroupPos);
-            return;
+            if (mGroupType == groupType) {
+                mGroupPos = groupPos;
+                XLog.d("Sticky group layout contains group type, position[%d] view", mGroupPos);
+                return;
+            } else {
+                removeGroupView();
+            }
         }
         mGroupPos = groupPos;
+        mGroupType = groupType;
         mGroupViewHolder = groupViewHolder;
         addView(groupViewHolder.itemView, 0);
         XLog.d("Add group view, group position[%d]", groupPos);
@@ -48,7 +55,8 @@ class StickyGroupLayout extends FrameLayout {
         }
         XLog.d("Remove group view");
         removeAllViews();
-        mGroupPos = -1;
+        mGroupPos = RecyclerView.NO_POSITION;
+        mGroupType = 0;
         mGroupViewHolder = null;
     }
 
@@ -68,7 +76,11 @@ class StickyGroupLayout extends FrameLayout {
         return mGroupPos;
     }
 
-//    public void setGroupPos(int mGroupPos) {
+    public int getGroupType() {
+        return mGroupType;
+    }
+
+    //    public void setGroupPos(int mGroupPos) {
 //        this.mGroupPos = mGroupPos;
 //    }
 }
