@@ -360,24 +360,56 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return mGroupList.get(groupPosition);
     }
 
+    /**
+     * 删除一整个组（包括group item）
+     * @param groupPosition
+     */
     public final void removeGroup(int groupPosition) {
+        removeGroup(groupPosition, true);
+    }
+
+    /**
+     * 清空一个组下面的所有数据（不包括group item）
+     * @param groupPosition
+     */
+    public final void clearGroup(int groupPosition) {
+        removeGroup(groupPosition, false);
+    }
+
+    /**
+     * @param groupPosition
+     * @param removeGroup   是否同时删除group item
+     */
+    private final void removeGroup(int groupPosition, boolean removeGroup) {
         if (!checkGroupPosition(groupPosition)) {
             return;
         }
 
         XLog.line(true);
+
+        T groupItem = mGroupList.get(groupPosition);
         int groupChildCount = getGroupChildCount(groupPosition);
+
         if (groupChildCount > 0) {
-            T groupItem = mGroupList.get(groupPosition);
             List<T> childList = mGroupChildMap.get(groupItem);
             mList.removeAll(childList);
-            mGroupChildMap.remove(groupItem);
+            childList.clear();
         }
 
         int adapPos = convertGroupPosition(groupPosition);
-        mGroupList.remove(groupPosition);
-        mList.remove(adapPos);
-        notifyItemRangeRemoved(adapPos, groupChildCount + 1);
+
+        if (removeGroup) {
+            mGroupChildMap.remove(groupItem);
+            mGroupList.remove(groupPosition);
+            mList.remove(adapPos);
+            notifyItemRangeRemoved(adapPos, groupChildCount + 1);
+        } else {
+            if (groupChildCount > 0) {
+                mList.remove(adapPos + 1);
+                notifyItemRangeRemoved(adapPos + 1, groupChildCount);
+            }
+        }
+
         XLog.line(false);
     }
 

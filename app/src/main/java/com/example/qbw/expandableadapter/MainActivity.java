@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.qbw.expandableadapter.entity.BaseEntity;
-import com.example.qbw.expandableadapter.entity.Child;
 import com.example.qbw.expandableadapter.entity.Footer;
 import com.example.qbw.expandableadapter.entity.Group;
 import com.example.qbw.expandableadapter.entity.Group1;
@@ -19,14 +17,10 @@ import com.example.qbw.expandableadapter.entity.Header;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.StickyLayout;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.regex.Matcher;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends Activity {
 
@@ -87,6 +81,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         test1();
+        test2();
     }
 
     private void test1() {
@@ -120,8 +115,37 @@ public class MainActivity extends Activity {
         }
 
         r = new Random(System.currentTimeMillis()).nextInt(50);
+        adapter.addGroup(new Group("g5"));
+        for (int i = 0; i < r; i++) {
+            adapter.addGroupChild(3, new GroupChild("gc" + i));
+        }
+
+        r = new Random(System.currentTimeMillis()).nextInt(50);
+        adapter.addGroup(new Group("g6"));
+        for (int i = 0; i < r; i++) {
+            adapter.addGroupChild(3, new GroupChild("gc" + i));
+        }
+
+
+        r = new Random(System.currentTimeMillis()).nextInt(50);
         for (int i = 0; i < r; i++) {
             adapter.addFooter(new Footer("f" + i));
         }
+    }
+
+    private void test2() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               adapter.removeGroup(4);
+            }
+        }, 3000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.clearGroup(4);
+            }
+        }, 5000);
     }
 }
