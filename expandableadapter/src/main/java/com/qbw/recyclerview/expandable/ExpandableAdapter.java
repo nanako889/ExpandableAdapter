@@ -258,25 +258,26 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void removeChild(int childPos) {
-        if (!checkChildPosition(childPos)) {
-            return;
-        }
-        XLog.line(true);
-        int adapPos = convertChildPosition(childPos);
-        mChildList.remove(childPos);
-        mList.remove(adapPos);
-        notifyItemRemoved(adapPos);
-        XLog.line(false);
+        removeChild(childPos, 1);
     }
 
     public final void removeChild(int childPos, int count) {
         if (!checkChildPosition(childPos)) {
             return;
         }
-        int end = childPos + count;
-        if (count <= 0 || end > getChildCount()) {
+
+        if (count <= 0) {
             XLog.e("wrong count[%d]", count);
             return;
+        }
+
+        int childCount = getChildCount();
+
+        int end = childPos + count;
+        if (end > childCount) {
+            count = childCount - childPos;
+            end = childCount;
+            XLog.w("reset count = %d", count);
         }
         XLog.line(true);
         int adapPos = convertChildPosition(childPos);
@@ -287,17 +288,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void clearChild() {
-        int childCount = getChildCount();
-        if (childCount <= 0) {
-            XLog.w("child count is 0");
-            return;
-        }
-        XLog.line(true);
-        int adapBeginPos = convertChildPosition(0);
-        mList.removeAll(mChildList);
-        mChildList.clear();
-        notifyItemRangeRemoved(adapBeginPos, childCount);
-        XLog.line(false);
+        removeChild(0, getChildCount());
     }
 
     public final void updateChild(int childPos, T t) {
