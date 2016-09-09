@@ -156,6 +156,12 @@ public class StickyLayout extends FrameLayout {
         XLog.line(true);
         if (expandableAdapter.getFooterCount() <= 0) {
             XLog.d("footer count <= 0");
+            if (mStickyGroupLayout.getGroupPos() <= 0) {
+                XLog.w("invalid group position");
+                return;
+            }
+            Point stickySize = expandableAdapter.getGroupSize(mStickyGroupLayout.getGroupPos());
+            layoutStickyGroup(0, 0, stickySize.x, stickySize.y);
         } else {
             int firstFooterAdapPos = expandableAdapter.convertFooterPosition(0);
             Rect firstFooterLocalR = viewRect(firstFooterAdapPos, false);

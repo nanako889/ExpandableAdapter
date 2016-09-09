@@ -273,14 +273,15 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkChildPosition(childPos)) {
             return;
         }
-        if (count <= 0 || childPos + count - 1 >= getChildCount()) {
+        int end = childPos + count;
+        if (count <= 0 || end > getChildCount()) {
             XLog.e("wrong count[%d]", count);
             return;
         }
         XLog.line(true);
         int adapPos = convertChildPosition(childPos);
-        mChildList.subList(childPos, childPos + count - 1).clear();
-        mList.subList(adapPos, adapPos + count - 1).clear();
+        mChildList.subList(childPos, end).clear();
+        mList.subList(adapPos, adapPos + count).clear();
         notifyItemRangeRemoved(adapPos, count);
         XLog.line(false);
     }
@@ -361,55 +362,71 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     /**
-     * 删除一整个组（包括group item）
+     * remove all group child(include group item)
      *
      * @param groupPosition
      */
     public final void removeGroup(int groupPosition) {
-        removeGroup(groupPosition, true);
+        _removeGroup(groupPosition, 0, 0, true);
     }
 
     /**
-     * 清空一个组下面的所有数据（不包括group item）
-     *
-     * @param groupPosition
+     * @see #clearGroupChild(int)
      */
+    @Deprecated
     public final void clearGroup(int groupPosition) {
-        removeGroup(groupPosition, false);
+        clearGroupChild(groupPosition);
     }
 
+
     /**
-     * @param groupPosition
-     * @param removeGroup   是否同时删除group item
+     * @param removeGroup true means remove group item(ignore child parameters, remove whole group include all child); false means not
      */
-    private final void removeGroup(int groupPosition, boolean removeGroup) {
+    private final void _removeGroup(int groupPosition, int childStarPosition, int count, boolean removeGroup) {
         if (!checkGroupPosition(groupPosition)) {
             return;
+        }
+
+        int groupChildCount = getGroupChildCount(groupPosition);
+        if (removeGroup) {
+            childStarPosition = 0;
+            count = groupChildCount;
+        } else {
+            if (!checkGroupChildPosition(groupPosition, childStarPosition)) {
+                return;
+            }
+        }
+
+        if (count <= 0) {
+            XLog.w("invalid count = %d", count);
+            return;
+        }
+
+        int childEnd = childStarPosition + count;
+
+        if (childEnd > groupChildCount) {
+            count = groupChildCount - childStarPosition;
+            childEnd = groupChildCount;
+            XLog.w("reset count = %d", count);
         }
 
         XLog.line(true);
 
         T groupItem = mGroupList.get(groupPosition);
-        int groupChildCount = getGroupChildCount(groupPosition);
+        int adapPos = convertGroupPosition(groupPosition);
 
         if (groupChildCount > 0) {
-            List<T> childList = mGroupChildMap.get(groupItem);
+            List<T> childList = mGroupChildMap.get(groupItem).subList(childStarPosition, childEnd);
             mList.removeAll(childList);
             childList.clear();
+            notifyItemRangeRemoved(adapPos + 1, count);
         }
-
-        int adapPos = convertGroupPosition(groupPosition);
 
         if (removeGroup) {
             mGroupChildMap.remove(groupItem);
             mGroupList.remove(groupPosition);
             mList.remove(adapPos);
-            notifyItemRangeRemoved(adapPos, groupChildCount + 1);
-        } else {
-            if (groupChildCount > 0) {
-                mList.remove(adapPos + 1);
-                notifyItemRangeRemoved(adapPos + 1, groupChildCount);
-            }
+            notifyItemRemoved(adapPos);
         }
 
         XLog.line(false);
@@ -430,6 +447,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     /**
      * update whole group (exclude group item)
+     *
      * @param groupPosition
      */
     public final void updateGroupChild(int groupPosition) {
@@ -534,17 +552,44 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return mGroupChildMap.get(mGroupList.get(groupPosition)).get(childPosition);
     }
 
+    /**
+     * @param groupPosition
+     * @param childStartPosition remove start from here
+     * @param count              item count to remove
+     */
+    public final void removeGroupChild(int groupPosition, int childStartPosition, int count) {
+        _removeGroup(groupPosition, childStartPosition, count, false);
+    }
+
     public final void removeGroupChild(int groupPosition, int childPosition) {
-        if (!checkGroupChildPosition(groupPosition, childPosition)) {
+        _removeGroup(groupPosition, childPosition, 1, false);
+    }
+
+    /**
+     * clear all child of group(exclude group item)
+     *
+     * @param groupPosition
+     * @see #clearGroupChild(int, int)
+     */
+    public final void clearGroupChild(int groupPosition) {
+        clearGroupChild(groupPosition, 0);
+    }
+
+    /**
+     * clear child of group start from childStarPosition
+     *
+     * @param groupPosition
+     * @param childStarPosition
+     * @see #clearGroupChild(int)
+     */
+    public final void clearGroupChild(int groupPosition, int childStarPosition) {
+        if (!checkGroupChildPosition(groupPosition, childStarPosition)) {
             return;
         }
-        XLog.line(true);
-        int adapPos = convertGroupChildPosition(groupPosition, childPosition);
-        XLog.v("groupPosition=%d, childPosition=%d, adapGroupChildPos=%d", groupPosition, childPosition, adapPos);
-        mGroupChildMap.get(mGroupList.get(groupPosition)).remove(childPosition);
-        mList.remove(adapPos);
-        notifyItemRemoved(adapPos);
-        XLog.line(false);
+        int groupChildCount = getGroupChildCount(groupPosition);
+        if (groupChildCount > 0) {
+            _removeGroup(groupPosition, childStarPosition, groupChildCount - childStarPosition, false);
+        }
     }
 
     public final void updateGroupChild(int groupPosition, int childPosition, T t) {
