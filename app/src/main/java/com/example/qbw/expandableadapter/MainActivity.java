@@ -82,6 +82,7 @@ public class MainActivity extends Activity {
         super.onStart();
         test1();
         test2();
+        test3();
     }
 
     private void test1() {
@@ -147,5 +148,19 @@ public class MainActivity extends Activity {
                 adapter.clearGroup(4);
             }
         }, 5000);
+    }
+
+    private void test3() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Group group = (Group) adapter.getGroup(0);
+                group.text = "update e";
+                GroupChild groupChild = (GroupChild) adapter.getGroupChild(0, 0);
+                groupChild.text = "update";
+                //adapter.updateGroupChild(0, true);
+                adapter.updateGroupChild(0);
+            }
+        }, 3000);
     }
 }

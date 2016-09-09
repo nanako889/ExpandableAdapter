@@ -362,6 +362,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     /**
      * 删除一整个组（包括group item）
+     *
      * @param groupPosition
      */
     public final void removeGroup(int groupPosition) {
@@ -370,6 +371,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     /**
      * 清空一个组下面的所有数据（不包括group item）
+     *
      * @param groupPosition
      */
     public final void clearGroup(int groupPosition) {
@@ -423,6 +425,38 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         mGroupList.set(groupPosition, t);
         mList.set(adapPos, t);
         notifyItemChanged(adapPos);
+        XLog.line(false);
+    }
+
+    /**
+     * update whole group (exclude group item)
+     * @param groupPosition
+     */
+    public final void updateGroupChild(int groupPosition) {
+        updateGroupChild(groupPosition, false);
+    }
+
+    /**
+     * 是否同时更新group
+     *
+     * @param groupPosition
+     * @param updateGroup
+     */
+    public final void updateGroupChild(int groupPosition, boolean updateGroup) {
+        if (!checkGroupPosition(groupPosition)) {
+            return;
+        }
+
+        XLog.line(true);
+        int adapPos = convertGroupPosition(groupPosition);
+        int childCount = getGroupChildCount(groupPosition);
+        if (updateGroup) {
+            notifyItemRangeChanged(adapPos, childCount + 1);
+        } else {
+            if (childCount > 0) {
+                notifyItemRangeChanged(adapPos + 1, childCount);
+            }
+        }
         XLog.line(false);
     }
 
