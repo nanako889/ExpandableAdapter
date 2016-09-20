@@ -85,41 +85,42 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         notifyDataSetChanged();
     }
 
-    public final void addHeader(T t) {
-        XLog.line(true);
-        mHeaderList.add(t);
-        int adapPos = convertHeaderPosition(getHeaderCount() - 1);
-        mList.add(adapPos, t);
-        notifyItemInserted(adapPos);
-        XLog.line(false);
+    public final void addHeader(T header) {
+        List<T> ts = new ArrayList<>();
+        ts.add(header);
+        addHeader(getHeaderCount(), ts);
     }
 
-    public final void addHeader(int headerPosition, T t) {
-        XLog.line(true);
-        if (checkHeaderPosition(headerPosition)) {
-            mHeaderList.add(headerPosition, t);
-            int adapPos = convertHeaderPosition(headerPosition);
-            mList.add(adapPos, t);
-            notifyItemInserted(adapPos);
-        } else {
-            addHeader(t);
-        }
-        XLog.line(false);
+    public final void addHeader(int headerPosition, T header) {
+        List<T> ts = new ArrayList<>();
+        ts.add(header);
+        addHeader(headerPosition, ts);
     }
 
-    public final void addHeader(List<T> ts) {
+    public final void addHeader(List<T> headerList) {
+        addHeader(getHeaderCount(), headerList);
+    }
+
+    public final void addHeader(int headerPosition, List<T> headerList) {
         XLog.line(true);
-        if (null == ts || ts.isEmpty()) {
+
+        if (null == headerList || headerList.isEmpty()) {
             XLog.e("wrong param");
             return;
         }
         int oldHeaderCount = getHeaderCount();
-        mHeaderList.addAll(ts);
-        int adapPos = convertHeaderPosition(oldHeaderCount);
-        mList.addAll(adapPos, ts);
-        int addSize = ts.size();
+
+        if (!checkHeaderPosition(headerPosition)) {
+            headerPosition = oldHeaderCount;
+        }
+        XLog.d("headerPosition = %d", headerPosition);
+        mHeaderList.addAll(headerPosition, headerList);
+        int adapPos = convertHeaderPosition(headerPosition);
+        mList.addAll(adapPos, headerList);
+        int addSize = headerList.size();
         XLog.v("notify item from %d, count = %d", adapPos, addSize);
         notifyItemRangeInserted(adapPos, addSize);
+
         XLog.line(false);
     }
 

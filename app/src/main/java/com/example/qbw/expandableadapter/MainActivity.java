@@ -9,13 +9,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.qbw.expandableadapter.entity.BaseEntity;
 import com.example.qbw.expandableadapter.entity.Child;
 import com.example.qbw.expandableadapter.entity.Group;
 import com.example.qbw.expandableadapter.entity.Group1;
 import com.example.qbw.expandableadapter.entity.GroupChild;
+import com.example.qbw.expandableadapter.entity.Header;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.StickyLayout;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import butterknife.Bind;
@@ -79,11 +84,58 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        test1();
+        //test1();
         //test2();
         //test3();
         //test4();
-        test5();
+        //test5();
+        testHeader();
+    }
+
+    private void testHeader() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.addHeader(new Header("header1"));
+                adapter.addHeader(new Header("header2"));
+            }
+        }, 2000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.addHeader(2, new Header("header3"));
+                adapter.addHeader(0, new Header("header4"));
+            }
+        }, 4000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<Header> headerList = new ArrayList<Header>();
+                headerList.add(new Header("header5"));
+                headerList.add(new Header("header6"));
+                headerList.add(new Header("header7"));
+                adapter.addHeader(Arrays.asList(headerList.toArray(new BaseEntity[headerList.size()])));
+            }
+        }, 6000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<Header> headerList = new ArrayList<Header>();
+                headerList.add(new Header("header8"));
+                headerList.add(new Header("header9"));
+                headerList.add(new Header("header10"));
+                adapter.addHeader(1, Arrays.asList(headerList.toArray(new BaseEntity[headerList.size()])));
+
+                headerList = new ArrayList<Header>();
+                headerList.add(new Header("header a"));
+                headerList.add(new Header("header b"));
+                headerList.add(new Header("header c"));
+                adapter.addHeader(6, Arrays.asList(headerList.toArray(new BaseEntity[headerList.size()])));
+            }
+        }, 8000);
     }
 
     private void test1() {
@@ -157,7 +209,8 @@ public class MainActivity extends Activity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                adapter.removeChild(0, 2);
+                //adapter.removeChild(1, 2);
+                adapter.clearChild();
             }
         }, 3000);
     }
