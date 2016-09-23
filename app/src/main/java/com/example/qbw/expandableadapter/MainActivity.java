@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.qbw.expandableadapter.entity.BaseEntity;
 import com.example.qbw.expandableadapter.entity.Child;
+import com.example.qbw.expandableadapter.entity.Footer;
 import com.example.qbw.expandableadapter.entity.Group;
 import com.example.qbw.expandableadapter.entity.Group1;
 import com.example.qbw.expandableadapter.entity.GroupChild;
@@ -90,6 +91,7 @@ public class MainActivity extends Activity {
         //test4();
         //test5();
         testHeader();
+        testFooter();
     }
 
     private void testHeader() {
@@ -136,6 +138,84 @@ public class MainActivity extends Activity {
                 adapter.addHeader(6, Arrays.asList(headerList.toArray(new BaseEntity[headerList.size()])));
             }
         }, 8000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.removeHeader(0);
+                adapter.removeHeader(1, 1);
+                adapter.clearHeader(5);
+            }
+        }, 10000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //adapter.clearHeader();
+            }
+        }, 12000);
+    }
+
+    private void testFooter() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.addFooter(new Footer("footer1"));
+                adapter.addFooter(new Footer("footer2"));
+            }
+        }, 2000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.addFooter(2, new Footer("footer3"));
+                adapter.addFooter(0, new Footer("footer4"));
+            }
+        }, 4000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<Footer> footerList = new ArrayList<Footer>();
+                footerList.add(new Footer("footer5"));
+                footerList.add(new Footer("footer6"));
+                footerList.add(new Footer("footer7"));
+                adapter.addFooter(Arrays.asList(footerList.toArray(new BaseEntity[footerList.size()])));
+            }
+        }, 6000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<Footer> footerList = new ArrayList<Footer>();
+                footerList.add(new Footer("footer8"));
+                footerList.add(new Footer("footer9"));
+                footerList.add(new Footer("footer10"));
+                adapter.addFooter(1, Arrays.asList(footerList.toArray(new BaseEntity[footerList.size()])));
+
+                footerList = new ArrayList<Footer>();
+                footerList.add(new Footer("footer a"));
+                footerList.add(new Footer("footer b"));
+                footerList.add(new Footer("footer c"));
+                adapter.addFooter(6, Arrays.asList(footerList.toArray(new BaseEntity[footerList.size()])));
+            }
+        }, 8000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.removeFooter(0);
+                adapter.removeFooter(1, 1);
+                adapter.clearFooter(5);
+            }
+        }, 10000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //adapter.clearFooter();
+            }
+        }, 12000);
     }
 
     private void test1() {

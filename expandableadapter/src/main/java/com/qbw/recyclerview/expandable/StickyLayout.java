@@ -211,6 +211,10 @@ public class StickyLayout extends FrameLayout {
             super.onScrolled(recyclerView, dx, dy);
             ExpandableAdapter expandableAdapter = (ExpandableAdapter) recyclerView.getAdapter();
             int firstVisibleItemPosition = PositionUtil.findFirstVisibleItemPosition(recyclerView);
+            if (RecyclerView.NO_POSITION == firstVisibleItemPosition) {
+                XLog.w("no visible item");
+                return;
+            }
             if (0 == dy) {
                 XLog.w("No Y distance");
                 checkUpdateStickyGroup(expandableAdapter, firstVisibleItemPosition);
