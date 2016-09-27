@@ -131,7 +131,13 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
      */
     @Override
     public int getGroupItemType(int groupPos) {
-        return 3 == groupPos || 1 == groupPos ? Type.GROUP1 : Type.GROUP;
+        BaseEntity entity = getGroup(groupPos);
+        if (entity instanceof Group) {
+            return Type.GROUP;
+        } else if (entity instanceof Group1) {
+            return Type.GROUP1;
+        }
+        return -1;
     }
 
     @Override

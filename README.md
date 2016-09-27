@@ -43,7 +43,13 @@
 Gradle:
 
 
-compile 'com.qbw.recyclerview:expandableadapter:2.7.0'
+compile 'com.qbw.recyclerview:expandableadapter:2.7.1'
+
+
+# v2.7.1
+
+
+1.clearGroupChild,bug修复
 
 
 # Author:

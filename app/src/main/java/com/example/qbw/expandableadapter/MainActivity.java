@@ -90,8 +90,58 @@ public class MainActivity extends Activity {
         //test3();
         //test4();
         //test5();
-        testHeader();
-        testFooter();
+        //testHeader();
+        //testFooter();
+        testGroupChild();
+    }
+
+    private void testGroupChild() {
+        adapter.addGroup(new Group("1"));
+        final List<GroupChild> groupChildList = new ArrayList<>();
+        for (int i=0;i<11;i++) {
+            groupChildList.add(new GroupChild("gp"+(i+1)));
+        }
+
+        adapter.addGroup(new Group("2"));
+        adapter.addGroupChild(1, new GroupChild("gp1"));
+        adapter.addGroupChild(1, new GroupChild("gp2"));
+        adapter.addGroupChild(1, new GroupChild("gp3"));
+        adapter.addGroupChild(1, new GroupChild("gp4"));
+        adapter.addGroupChild(1, new GroupChild("gp5"));
+        adapter.addGroupChild(1, new GroupChild("gp6"));
+        adapter.addGroupChild(1, new GroupChild("gp7"));
+        adapter.addGroupChild(1, new GroupChild("gp8"));
+        adapter.addGroupChild(1, new GroupChild("gp9"));
+        adapter.addGroupChild(1, new GroupChild("gp10"));
+        adapter.addGroupChild(1, new GroupChild("gp11"));
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<GroupChild> groupChildList1 = groupChildList.subList(0,8);
+                adapter.addGroupChild(0, Arrays.asList(groupChildList1.toArray(new BaseEntity[groupChildList1.size()])));
+                XLog.d("group 0 size = %d", adapter.getGroupChildCount(0));
+            }
+        }, 3000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<GroupChild> groupChildList1 = groupChildList.subList(8,groupChildList.size());
+                adapter.addGroupChild(0, Arrays.asList(groupChildList1.toArray(new BaseEntity[groupChildList1.size()])));
+                XLog.d("group 0 size = %d", adapter.getGroupChildCount(0));
+            }
+        }, 6000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<GroupChild> groupChildList1 = groupChildList.subList(8,groupChildList.size());
+                //adapter.addGroupChild(0, Arrays.asList(groupChildList1.toArray(new BaseEntity[groupChildList1.size()])));
+                adapter.clearGroupChild(0, 8);
+                XLog.d("group 0 size = %d", adapter.getGroupChildCount(0));
+            }
+        }, 9000);
     }
 
     private void testHeader() {
@@ -289,8 +339,7 @@ public class MainActivity extends Activity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //adapter.removeChild(1, 2);
-                adapter.clearChild();
+                adapter.removeChild(0, 2);
             }
         }, 3000);
     }

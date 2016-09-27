@@ -131,6 +131,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return mHeaderList.get(headerPosition);
     }
 
+    /**
+     * @see #removeHeader(int)
+     */
+    @Deprecated
     public final void removeHeader(T t) {
         removeHeader(mHeaderList.indexOf(t));
     }
@@ -214,7 +218,12 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         XLog.line(false);
     }
 
+    @Deprecated
     public final void addChildPosition(int childPos, T t) {
+        addChild(childPos, t);
+    }
+
+    public final void addChild(int childPos, T t) {
         XLog.line(true);
         int childCount = getChildCount();
         if (childPos >= childCount) {
@@ -400,14 +409,17 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
         XLog.line(true);
 
+        XLog.d("groupPosition=%d, childStarPosition=%d, count=%d, removeGroup=%b, childEnd=%d", groupPosition, childStarPosition, count, removeGroup, childEnd);
+
+
         T groupItem = mGroupList.get(groupPosition);
         int adapPos = convertGroupPosition(groupPosition);
 
         if (groupChildCount > 0) {
-            List<T> childList = mGroupChildMap.get(groupItem).subList(childStarPosition, childEnd);
-            mList.removeAll(childList);
-            childList.clear();
-            notifyItemRangeRemoved(adapPos + 1, count);
+            mGroupChildMap.get(groupItem).subList(childStarPosition, childEnd).clear();
+            int adapBeginPos = adapPos + childStarPosition + 1;
+            mList.subList(adapBeginPos, adapBeginPos + count).clear();
+            notifyItemRangeRemoved(adapBeginPos, count);
         }
 
         if (removeGroup) {
@@ -683,6 +695,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         XLog.line(false);
     }
 
+    /**
+     * @see #removeFooter(int)
+     */
+    @Deprecated
     public final void removeFooter(T t) {
         removeFooter(mFooterList.indexOf(t));
     }
