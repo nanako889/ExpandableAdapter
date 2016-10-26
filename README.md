@@ -43,7 +43,13 @@
 Gradle:
 
 
-compile 'com.qbw.recyclerview:expandableadapter:2.7.1'
+compile 'com.qbw.recyclerview:expandableadapter:2.8.0'
+
+
+# v2.8.0
+
+
+1.增加clearChild(beginPos)
 
 
 # v2.7.1

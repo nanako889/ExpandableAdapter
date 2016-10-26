@@ -199,10 +199,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private boolean checkHeaderPosition(int headerPos) {
         int headerCount;
         if (headerPos < 0) {
-            XLog.e("invalid header position[%d]", headerPos);
+            XLog.w("invalid header position[%d]", headerPos);
             return false;
         } else if (headerPos >= (headerCount = getHeaderCount())) {
-            XLog.e("invalid header position[%d], header size is [%d]", headerPos, headerCount);
+            XLog.w("invalid header position[%d], header size is [%d]", headerPos, headerCount);
             return false;
         }
         return true;
@@ -293,6 +293,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         XLog.line(false);
     }
 
+    public final void clearChild(int beginPos) {
+        removeChild(beginPos, getChildCount() - beginPos);
+    }
+
     public final void clearChild() {
         removeChild(0, getChildCount());
     }
@@ -326,10 +330,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private boolean checkChildPosition(int childPos) {
         int childCount;
         if (childPos < 0) {
-            XLog.e("invalid child position[%d]", childPos);
+            XLog.w("invalid child position[%d]", childPos);
             return false;
         } else if (childPos >= (childCount = getChildCount())) {
-            XLog.e("invalid child position[%d], child size is [%d]", childPos, childCount);
+            XLog.w("invalid child position[%d], child size is [%d]", childPos, childCount);
             return false;
         }
         return true;
@@ -486,10 +490,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private boolean checkGroupPosition(int groupPos) {
         int groupCount;
         if (groupPos < 0) {
-            XLog.e("invalid group position[%d]", groupPos);
+            XLog.w("invalid group position[%d]", groupPos);
             return false;
         } else if (groupPos >= (groupCount = getGroupCount())) {
-            XLog.e("invalid group position[%d], group size is %d", groupPos, groupCount);
+            XLog.w("invalid group position[%d], group size is %d", groupPos, groupCount);
             return false;
         }
 
@@ -625,12 +629,12 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private boolean checkGroupChildPosition(int groupPos, int childPos) {
         int groupChildCount;
         if (childPos < 0) {
-            XLog.e("invalid group child position[%d, %d]", groupPos, childPos);
+            XLog.w("invalid group child position[%d, %d]", groupPos, childPos);
             return false;
         } else if (!checkGroupPosition(groupPos)) {
             return false;
         } else if (childPos >= (groupChildCount = getGroupChildCount(groupPos))) {
-            XLog.e("invalid group child position[%d, %d], group[%d] child size is [%d]", groupPos, childPos, groupPos, groupChildCount);
+            XLog.w("invalid group child position[%d, %d], group[%d] child size is [%d]", groupPos, childPos, groupPos, groupChildCount);
             return false;
         }
         return true;
@@ -741,10 +745,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private boolean checkFooterPosition(int footerPos) {
         int footerCount;
         if (footerPos < 0) {
-            XLog.e("invalid footer position[%d]", footerPos);
+            XLog.w("invalid footer position[%d]", footerPos);
             return false;
         } else if (footerPos >= (footerCount = getFooterCount())) {
-            XLog.e("invalid footer position[%d], footer size is [%d]", footerPos, footerCount);
+            XLog.w("invalid footer position[%d], footer size is [%d]", footerPos, footerCount);
             return false;
         }
         return true;
