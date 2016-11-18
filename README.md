@@ -43,7 +43,13 @@
 Gradle:
 
 
-compile 'com.qbw.recyclerview:expandableadapter:2.8.0'
+compile 'com.qbw.recyclerview:expandableadapter:2.8.1'
+
+
+# v2.8.1
+
+
+1.修复Group没有child时无法删除Group
 
 
 # v2.8.0

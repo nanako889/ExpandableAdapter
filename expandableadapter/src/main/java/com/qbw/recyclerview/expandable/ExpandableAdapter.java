@@ -396,11 +396,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             if (!checkGroupChildPosition(groupPosition, childStarPosition)) {
                 return;
             }
-        }
-
-        if (count <= 0) {
-            XLog.w("invalid count = %d", count);
-            return;
+            if (count <= 0) {
+                XLog.e("invalid count = %d", count);
+                return;
+            }
         }
 
         int childEnd = childStarPosition + count;

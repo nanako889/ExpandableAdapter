@@ -92,7 +92,21 @@ public class MainActivity extends Activity {
         //test5();
         //testHeader();
         //testFooter();
-        testGroupChild();
+        //testGroupChild();
+        testGroup();
+    }
+
+    private void testGroup() {
+        adapter.addGroup(new Group("1"));
+        adapter.addGroupChild(0, new GroupChild("1"));
+        adapter.addGroup(new Group("2"));
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adapter.removeGroup(0);
+                adapter.removeGroup(0);
+            }
+        }, 3000);
     }
 
     private void testGroupChild() {
