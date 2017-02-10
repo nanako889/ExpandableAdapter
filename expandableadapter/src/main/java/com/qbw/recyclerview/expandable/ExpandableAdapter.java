@@ -339,33 +339,38 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return true;
     }
 
-    public final void addGroup(T t) {
-        addGroup(getGroupCount(), t);
+    public final int addGroup(T t) {
+        return addGroup(getGroupCount(), t);
     }
 
-    public final void addGroup(int position, T t) {
+    /**
+     * @param targetPosition group的目标添加位置
+     * @param t
+     * @return group实际的添加位置(目标位置大于group数量的时候会不同)
+     */
+    public final int addGroup(int targetPosition, T t) {
         XLog.line(true);
-        if (position < 0) {
-            XLog.e("invalid group position %d", position);
-            return;
+        if (targetPosition < 0) {
+            XLog.e("invalid group position %d", targetPosition);
+            return -1;
         } else if (mGroupChildMap.containsKey(t)) {
             XLog.e("group t is alread exist!You must use a different t to create a new group");
-            return;
+            return -1;
         }
 
         int groupCount = getGroupCount();
-        if (position > groupCount) {
-            XLog.w("reset position %d -> %d", position, groupCount);
-            position = groupCount;
+        if (targetPosition > groupCount) {
+            XLog.w("reset position %d -> %d", targetPosition, groupCount);
+            targetPosition = groupCount;
         }
-        mGroupList.add(position, t);
-        //int groupCount = getGroupCount();
+        mGroupList.add(targetPosition, t);
         mGroupChildMap.put(t, new ArrayList<T>());
-        int adapPos = convertGroupPosition(position);
+        int adapPos = convertGroupPosition(targetPosition);
         mList.add(adapPos, t);
         notifyItemInserted(adapPos);
         XLog.v("now group count is %d", getGroupCount());
         XLog.line(false);
+        return targetPosition;
     }
 
     public final void removeGroup(T t) {
