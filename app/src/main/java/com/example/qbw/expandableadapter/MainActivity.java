@@ -90,23 +90,39 @@ public class MainActivity extends Activity {
         //test3();
         //test4();
         //test5();
-        //testHeader();
-        //testFooter();
-        //testGroupChild();
-        testGroup();
+        testHeader();
+        testFooter();
+        testGroupChild();
+        //testGroup();
     }
 
     private void testGroup() {
         adapter.addGroup(new Group("1"));
         adapter.addGroupChild(0, new GroupChild("1"));
         adapter.addGroup(new Group("2"));
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adapter.removeGroup(0);
-                adapter.removeGroup(0);
-            }
-        }, 3000);
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                adapter.removeGroup(0);
+//                adapter.removeGroup(0);
+//            }
+//        }, 3000);
+        adapter.addGroup(1, new Group("3"));
+        adapter.addGroup(0, new Group("4"));
+//        adapter.addGroupChild(0, new GroupChild("gp1"));
+//        adapter.addGroupChild(0, new GroupChild("gp2"));
+//        adapter.addGroupChild(0, new GroupChild("gp3"));
+//        adapter.addGroupChild(0, new GroupChild("gp4"));
+//        adapter.addGroupChild(0, new GroupChild("gp5"));
+//        adapter.addGroupChild(0, new GroupChild("gp6"));
+//        adapter.addGroupChild(0, new GroupChild("gp7"));
+//        adapter.addGroupChild(0, new GroupChild("gp8"));
+//        adapter.addGroupChild(0, new GroupChild("gp9"));
+//        adapter.addGroupChild(0, new GroupChild("gp10"));
+//        adapter.addGroupChild(0, new GroupChild("gp11"));
+        adapter.addGroup(100, new Group("5"));
+        adapter.addGroup(new Group("6"));
+        adapter.addGroup(-1, new Group("7"));
     }
 
     private void testGroupChild() {
@@ -116,7 +132,7 @@ public class MainActivity extends Activity {
             groupChildList.add(new GroupChild("gp"+(i+1)));
         }
 
-        adapter.addGroup(new Group("2"));
+        adapter.addGroup(new Group1("2"));
         adapter.addGroupChild(1, new GroupChild("gp1"));
         adapter.addGroupChild(1, new GroupChild("gp2"));
         adapter.addGroupChild(1, new GroupChild("gp3"));

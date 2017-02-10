@@ -20,6 +20,7 @@ import com.example.qbw.expandableadapter.holder.GroupItemViewHolder;
 import com.example.qbw.expandableadapter.holder.GroupViewHolder;
 import com.example.qbw.expandableadapter.holder.HeaderViewHolder;
 import com.example.qbw.expandableadapter.holder.ItemViewHolder;
+import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.ExpandableAdapter;
 
 /**
@@ -93,18 +94,23 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
 
     @Override
     public RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupPosition) {
-        if (3 != groupPosition && 1 != groupPosition) {
+        BaseEntity entity = getGroup(groupPosition);
+        if (entity instanceof Group) {
             BaseViewHolder groupViewHolder = new GroupViewHolder(mContext, null);
             groupViewHolder.bindData(-1, getGroup(groupPosition));
             return groupViewHolder;
-        } else {
+        } else if (entity instanceof Group1) {
             BaseViewHolder groupViewHolder = new Group1ViewHolder(mContext, null);
+            groupViewHolder.bindData(-1, getGroup(groupPosition));
             return groupViewHolder;
         }
+        XLog.e("type not match");
+        return null;
     }
 
     @Override
-    public void bindStickyGroupData(int groupPosition, RecyclerView.ViewHolder stickyGroupViewHolder) {
+    public void bindStickyGroupData(int groupPosition,
+                                    RecyclerView.ViewHolder stickyGroupViewHolder) {
         BaseViewHolder groupViewHolder = (BaseViewHolder) stickyGroupViewHolder;
         groupViewHolder.bindData(-1, getGroup(groupPosition));
     }
@@ -155,9 +161,11 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = windowManager.getDefaultDisplay();
         if (3 == groupPosition || 1 == groupPosition) {
-            return new Point(display.getWidth(), (int) mContext.getResources().getDimension(R.dimen.group1_height));
+            return new Point(display.getWidth(),
+                             (int) mContext.getResources().getDimension(R.dimen.group1_height));
         } else {
-            return new Point(display.getWidth(), (int) mContext.getResources().getDimension(R.dimen.group_height));
+            return new Point(display.getWidth(),
+                             (int) mContext.getResources().getDimension(R.dimen.group_height));
         }
     }
 

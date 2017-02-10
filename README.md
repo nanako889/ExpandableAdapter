@@ -43,7 +43,13 @@
 Gradle:
 
 
-compile 'com.qbw.recyclerview:expandableadapter:2.8.1'
+compile 'com.qbw.recyclerview:expandableadapter:2.9.0'
+
+# v2.9.0
+
+1.增加addGroup(int, T)将group插入指定的位置
+
+已知影响：addGroup(int, T)会导致group悬浮有问题,下个版本会修复
 
 
 # v2.8.1

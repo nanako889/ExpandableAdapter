@@ -146,7 +146,6 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
         int childCount = getChildCount();
         XLog.v("headerCount=%d, childCount=%d, groupCount=%d", headerCount, childCount, groupCount);
         if (groupCount > 0) {//some item is grouped.we must check group in the end
-            outer:
             for (int i = 0; i < groupCount; i++) {
                 int groupAdapPosition = convertGroupPosition(i);
                 XLog.v("loop=%d, adapter group position=%d", i, groupAdapPosition);
