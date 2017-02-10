@@ -43,7 +43,7 @@
 Gradle:
 
 
-compile 'com.qbw.recyclerview:expandableadapter:2.9.0'
+compile 'com.qbw.recyclerview:expandableadapter:2.10.0'
 
 
 # v2.10.0
