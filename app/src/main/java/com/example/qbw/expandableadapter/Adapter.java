@@ -41,22 +41,22 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         BaseViewHolder viewHolder = null;
         switch (viewType) {
             case Type.HEADER:
-                viewHolder = new HeaderViewHolder(mContext, parent);
+                viewHolder = new HeaderViewHolder(mWrContext.get(), parent);
                 break;
             case Type.CHILD:
-                viewHolder = new ItemViewHolder(mContext, parent);
+                viewHolder = new ItemViewHolder(mWrContext.get(), parent);
                 break;
             case Type.GROUP:
-                viewHolder = new GroupViewHolder(mContext, parent);
+                viewHolder = new GroupViewHolder(mWrContext.get(), parent);
                 break;
             case Type.GROUP_CHILD:
-                viewHolder = new GroupItemViewHolder(mContext, parent);
+                viewHolder = new GroupItemViewHolder(mWrContext.get(), parent);
                 break;
             case Type.FOOTER:
-                viewHolder = new FooterViewHolder(mContext, parent);
+                viewHolder = new FooterViewHolder(mWrContext.get(), parent);
                 break;
             case Type.GROUP1:
-                viewHolder = new Group1ViewHolder(mContext, parent);
+                viewHolder = new Group1ViewHolder(mWrContext.get(), parent);
                 break;
             default:
                 break;
@@ -93,26 +93,48 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
     //----------------------begin 使用StickyLayout需要实现的方法----------------
 
     @Override
-    public RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupPosition) {
-        BaseEntity entity = getGroup(groupPosition);
-        if (entity instanceof Group) {
-            BaseViewHolder groupViewHolder = new GroupViewHolder(mContext, null);
-            groupViewHolder.bindData(-1, getGroup(groupPosition));
-            return groupViewHolder;
-        } else if (entity instanceof Group1) {
-            BaseViewHolder groupViewHolder = new Group1ViewHolder(mContext, null);
-            groupViewHolder.bindData(-1, getGroup(groupPosition));
-            return groupViewHolder;
+    public RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType, ViewGroup parent) {
+        RecyclerView.ViewHolder viewHolder = null;
+        switch (groupType) {
+            case Type.GROUP:
+                viewHolder = new GroupViewHolder(mWrContext.get(), parent);
+                break;
+            case Type.GROUP1:
+                viewHolder = new Group1ViewHolder(mWrContext.get(), parent);
+                break;
+            default:
+                break;
         }
-        XLog.e("type not match");
-        return null;
+        return viewHolder;
     }
 
     @Override
-    public void bindStickyGroupData(int groupPosition,
-                                    RecyclerView.ViewHolder stickyGroupViewHolder) {
+    public void onBindStickyGroupViewHolder(int groupPosition,
+                                            RecyclerView.ViewHolder stickyGroupViewHolder) {
         BaseViewHolder groupViewHolder = (BaseViewHolder) stickyGroupViewHolder;
-        groupViewHolder.bindData(-1, getGroup(groupPosition));
+        groupViewHolder.bindData(convertGroupPosition(groupPosition), getGroup(groupPosition));
+    }
+
+    @Override
+    public Point getStickyGroupViewHolderSize(int groupType) {//宽度可以随便写，没有用到
+        Point point = null;
+        switch (groupType) {
+            case Type.GROUP:
+                point = new Point(0,
+                                  (int) mWrContext.get()
+                                                  .getResources()
+                                                  .getDimension(R.dimen.group_height));
+                break;
+            case Type.GROUP1:
+                point = new Point(0,
+                                  (int) mWrContext.get()
+                                                  .getResources()
+                                                  .getDimension(R.dimen.group1_height));
+                break;
+            default:
+                break;
+        }
+        return point;
     }
 
     @Override
@@ -130,21 +152,21 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         return Type.GROUP == getItemViewType(adapPos) || Type.GROUP1 == getItemViewType(adapPos);
     }
 
-    /**
-     * 返回的类型的值来源于getItemType
-     *
-     * @see #getItemViewType(int)
-     */
-    @Override
-    public int getGroupItemType(int groupPos) {
-        BaseEntity entity = getGroup(groupPos);
-        if (entity instanceof Group) {
-            return Type.GROUP;
-        } else if (entity instanceof Group1) {
-            return Type.GROUP1;
-        }
-        return -1;
-    }
+    //    /**
+    //     * 返回的类型的值来源于getItemType
+    //     *
+    //     * @see #getItemViewType(int)
+    //     */
+    //    @Override
+    //    public int getGroupItemType(int groupPos) {
+    //        BaseEntity entity = getGroup(groupPos);
+    //        if (entity instanceof Group) {
+    //            return Type.GROUP;
+    //        } else if (entity instanceof Group1) {
+    //            return Type.GROUP1;
+    //        }
+    //        return -1;
+    //    }
 
     @Override
     public boolean isPostionGroupChild(int adapPos) {
@@ -156,18 +178,18 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         return Type.FOOTER == getItemViewType(adapPos);
     }
 
-    @Override
-    public Point getGroupSize(int groupPosition) {
-        WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        if (3 == groupPosition || 1 == groupPosition) {
-            return new Point(display.getWidth(),
-                             (int) mContext.getResources().getDimension(R.dimen.group1_height));
-        } else {
-            return new Point(display.getWidth(),
-                             (int) mContext.getResources().getDimension(R.dimen.group_height));
-        }
-    }
+    //    @Override
+    //    public Point getGroupSize(int groupPosition) {
+    //        WindowManager windowManager = (WindowManager) mWrContext.get().getSystemService(Context.WINDOW_SERVICE);
+    //        Display display = windowManager.getDefaultDisplay();
+    //        if (3 == groupPosition || 1 == groupPosition) {
+    //            return new Point(display.getWidth(),
+    //                    (int) mWrContext.get().getResources().getDimension(R.dimen.group1_height));
+    //        } else {
+    //            return new Point(display.getWidth(),
+    //                    (int) mWrContext.get().getResources().getDimension(R.dimen.group_height));
+    //        }
+    //    }
 
     //----------------------end 使用StickyLayout需要实现的方法----------------
 

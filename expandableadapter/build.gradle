@@ -8,7 +8,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 22
         versionCode 1
-        versionName "2.10.0"
+        versionName "3.0.0"
     }
     buildTypes {
         release {
@@ -22,5 +22,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:recyclerview-v7:23.0.1'
-    compile 'com.qbw.log:xlog:1.5.0'
+    compile 'com.qbw.log:xlog:1.7.1'
 }

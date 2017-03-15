@@ -42,9 +42,13 @@
 
 Gradle:
 
+compile 'com.qbw.recyclerview:expandableadapter:3.0.0'
 
-compile 'com.qbw.recyclerview:expandableadapter:2.10.0'
 
+# v3.0.0
+
+1.重写group悬浮逻辑
+2.修复v2.9.0bug
 
 # v2.10.0
 
