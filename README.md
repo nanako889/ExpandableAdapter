@@ -12,7 +12,7 @@
 #使用说明
 
 
-1.需要Group悬浮,将RecyclerView包裹在'StickyLayout'里面,并且调用'stickylayout'的init函数传入参数true(true,表示group悬浮,false表示不悬浮)
+1.需要Group悬浮,将RecyclerView包裹在'StickyLayout'里面,并且调用'stickylayout'的init函数传入参数true(true,表示group悬浮,false表示不悬浮)，同时Adapter要实现StickyListener
 
 
     <com.qbw.recyclerview.expandable.StickyLayout
@@ -42,8 +42,13 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.0.0'
+compile 'com.qbw.recyclerview:expandableadapter:3.1.0'
 
+
+# v3.1.0
+
+1.将StickyLayout需要的回调抽离成独立的一个StickyListener
+2.优化getXXXPosition函数
 
 # v3.0.0
 

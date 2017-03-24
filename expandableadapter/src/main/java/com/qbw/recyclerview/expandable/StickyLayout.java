@@ -1,10 +1,12 @@
 package com.qbw.recyclerview.expandable;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.qbw.log.XLog;
@@ -32,6 +34,7 @@ public class StickyLayout extends FrameLayout {
 
     private RecyclerView mRecyclerView;
     private ExpandableAdapter mExpandableAdapter;
+    private StickyListener mStickyListener;
 
     /**
      * 是否悬浮group
@@ -59,9 +62,9 @@ public class StickyLayout extends FrameLayout {
         if (getChildCount() > 1) {
             View childView = getChildAt(1);
             childView.layout(0,
-                             mStickyGroupY,
-                             childView.getMeasuredWidth(),
-                             childView.getMeasuredHeight() + mStickyGroupY);
+                    mStickyGroupY,
+                    childView.getMeasuredWidth(),
+                    childView.getMeasuredHeight() + mStickyGroupY);
             removeCallbacks(mUpdateDelayRunn);
             postDelayed(mUpdateDelayRunn, getUpdateDelay());
         }
@@ -108,7 +111,10 @@ public class StickyLayout extends FrameLayout {
         mExpandableAdapter = (ExpandableAdapter) mRecyclerView.getAdapter();
         if (mExpandableAdapter == null) {
             throw new RuntimeException("请先设置RecyclerView的Adapter！");
+        } else if (!(mExpandableAdapter instanceof StickyListener)) {
+            throw new RuntimeException("Adapter 必须实现 StickyListener！");
         }
+        mStickyListener = (StickyListener) mExpandableAdapter;
         mRecyclerView.addOnScrollListener(mStickyScrollListener);
     }
 
@@ -150,10 +156,10 @@ public class StickyLayout extends FrameLayout {
         }
         mGPos = -1;
         mGType = -1;
-        if (mExpandableAdapter.isPostionGroup(mFVIPos)) {
+        if (mStickyListener.isPostionGroup(mFVIPos)) {
             mGPos = mExpandableAdapter.getGroupPosition(mFVIPos);
             mGType = mExpandableAdapter.getItemViewType(mFVIPos);
-        } else if (mExpandableAdapter.isPostionGroupChild(mFVIPos)) {
+        } else if (mStickyListener.isPostionGroupChild(mFVIPos)) {
             int[] poss = mExpandableAdapter.getGroupChildPosition(mFVIPos);
             mGPos = poss[0];
             mGType = mExpandableAdapter.getItemViewType(mFVIPos - (poss[1] + 1));
@@ -190,7 +196,7 @@ public class StickyLayout extends FrameLayout {
             mStickGroupTargetY = 0;
         } else {
             mNT = nextVh.itemView.getTop();
-            mSH = mExpandableAdapter.getStickyGroupViewHolderSize(mGType).y;
+            mSH = mStickyListener.getStickyGroupViewHolderSize(mGType).y;
             if (XLog.isEnabled()) XLog.v("next rect top[%d], sticky rect height[%d]", mNT, mSH);
             if (mNT >= mSH) {
                 mStickGroupTargetY = 0;
@@ -201,16 +207,17 @@ public class StickyLayout extends FrameLayout {
 
         if (mStickyGroupHelper.getGroupType() != mGType) {
             mStickyGroupHelper.addGroupViewHolder(this,
-                                                  mGPos,
-                                                  mGType,
-                                                  mGCount,
-                                                  mExpandableAdapter.onCreateStickyGroupViewHolder(
-                                                          mGType,
-                                                          this),
-                                                  mExpandableAdapter);
+                    mFVIPos,
+                    mGPos,
+                    mGType,
+                    mGCount,
+                    mStickyListener.onCreateStickyGroupViewHolder(
+                            mGType,
+                            mRecyclerView),
+                    mStickyListener);
             if (XLog.isEnabled()) XLog.d("add group[%d] view", mGPos);
         } else {
-            mStickyGroupHelper.bindGroupViewHolder(mGPos, mGType, mGCount, mExpandableAdapter);
+            mStickyGroupHelper.bindGroupViewHolder(mFVIPos, mGPos, mGType, mGCount, mStickyListener);
             if (XLog.isEnabled()) XLog.v("bind group[%d] view", mGPos);
         }
     }
@@ -251,4 +258,23 @@ public class StickyLayout extends FrameLayout {
         }
     }
 
+    public interface StickyListener {
+        boolean isPostionGroup(int adapterPosition);
+
+        boolean isPostionGroupChild(int adapterPosition);
+
+        boolean isPositionFooter(int adapterPosition);
+
+        RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType,
+                                                              ViewGroup parent);
+
+        void onBindStickyGroupViewHolder(int adapterPosition,
+                                         int groupPosition,
+                                         RecyclerView.ViewHolder stickyGroupViewHolder);
+
+        /**
+         * 添加groupview之前需要计算y坐标，所以要提前获得groupview的高度
+         */
+        Point getStickyGroupViewHolderSize(int groupType);
+    }
 }

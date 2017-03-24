@@ -70,12 +70,22 @@ public class MainActivity extends Activity {
 
         });
         test();
+        //test1();
     }
 
     private void initView() {
         mTextView = (TextView) findViewById(R.id.change_txt);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mStickyLayout = (StickyLayout) findViewById(R.id.stickylayout);
+    }
+
+    private void test1() {
+        for (int i=0;i<100;i++) {
+            mAdapter.addGroup(new Group("group"+i));
+            for (int j=0;j<100;j++) {
+                mAdapter.addGroupChild(i, new GroupChild("groupchild"+j));
+            }
+        }
     }
 
     private void test() {

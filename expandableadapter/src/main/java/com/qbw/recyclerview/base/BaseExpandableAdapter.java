@@ -2,13 +2,11 @@ package com.qbw.recyclerview.base;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 
 import com.qbw.log.XLog;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 /**
  * Created by Bond on 2016/4/2.
@@ -44,18 +42,18 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
         return ctx == null || (ctx instanceof Activity && ((Activity) ctx).isFinishing());
     }
 
-    @Override
-    public int getItemCount() {
-        int itemCount = 0;
-        itemCount += getHeaderCount();
-        itemCount += getChildCount();
-        itemCount += getGroupCount();
-        for (int i = 0; i < getGroupCount(); i++) {
-            itemCount += getGroupChildCount(i);
-        }
-        itemCount += getFooterCount();
-        return itemCount;
-    }
+//    @Override
+//    public int getItemCount() {
+//        int itemCount = 0;
+//        itemCount += getHeaderCount();
+//        itemCount += getChildCount();
+//        itemCount += getGroupCount();
+//        for (int i = 0; i < getGroupCount(); i++) {
+//            itemCount += getGroupChildCount(i);
+//        }
+//        itemCount += getFooterCount();
+//        return itemCount;
+//    }
 
     @Override
     public long getItemId(int position) {
@@ -83,20 +81,24 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
     public abstract int getFooterCount();
 
 
-    /**
-     * @param position, position in adapter data list
-     * @return header position in header data list
-     */
-    public int getHeaderPosition(int position) {
-        int headerCount = getHeaderCount();
-        if (headerCount > 0 && position < headerCount) {
-            if (XLog.isEnabled())
-                XLog.v("adapter position[%d] -> header position[%d]", position, position);
-            return position;
-        }
-        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Header", position);
-        return -1;
-    }
+//    /**
+//     * @param position, position in adapter data list
+//     * @return header position in header data list
+//     */
+//    public int getHeaderPosition(int position) {
+//        if (!isPositionHeader(position)) {
+//            if (XLog.isEnabled()) XLog.w("position %d is not a header", position);
+//            return -1;
+//        }
+//        int headerCount = getHeaderCount();
+//        if (headerCount > 0 && position < headerCount) {
+//            if (XLog.isEnabled())
+//                XLog.v("adapter position[%d] -> header position[%d]", position, position);
+//            return position;
+//        }
+//        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Header", position);
+//        return -1;
+//    }
 
     /**
      * @param headerPosition, header position in header data list
@@ -106,22 +108,26 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
         return headerPosition;
     }
 
-    /**
-     * @param position, position in adapter data list
-     * @return child position in child data list
-     */
-    public int getChildPosition(int position) {
-        int headerCount = getHeaderCount();
-        int childCount = getChildCount();
-        if (childCount > 0 && position >= headerCount && position <= headerCount + childCount - 1) {
-            int childPos = position - headerCount;
-            if (XLog.isEnabled())
-                XLog.v("adapter position[%d] -> child position[%d]", position, childPos);
-            return childPos;
-        }
-        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Child!", position);
-        return -1;
-    }
+//    /**
+//     * @param position, position in adapter data list
+//     * @return child position in child data list
+//     */
+//    public int getChildPosition(int position) {
+//        if (!isPositionChild(position)) {
+//            if (XLog.isEnabled()) XLog.w("position %d is not a child", position);
+//            return -1;
+//        }
+//        int headerCount = getHeaderCount();
+//        int childCount = getChildCount();
+//        if (childCount > 0 && position >= headerCount && position <= headerCount + childCount - 1) {
+//            int childPos = position - headerCount;
+//            if (XLog.isEnabled())
+//                XLog.v("adapter position[%d] -> child position[%d]", position, childPos);
+//            return childPos;
+//        }
+//        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Child!", position);
+//        return -1;
+//    }
 
     /**
      * @param childPosition, child position in child data list
@@ -134,22 +140,26 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
         return adapPos;
     }
 
-    /**
-     * @param position ,position in adapter data list
-     * @return footer position in footer data list
-     */
-    public int getFooterPosition(int position) {
-        int itemCount = getItemCount();
-        int footerCount = getFooterCount();
-        if (footerCount > 0 && position >= itemCount - footerCount) {
-            int footerPos = position - (itemCount - footerCount);
-            if (XLog.isEnabled())
-                XLog.v("adapter position[%d] -> footer position[%d]", position, footerPos);
-            return footerPos;
-        }
-        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Footer!", position);
-        return -1;
-    }
+//    /**
+//     * @param position ,position in adapter data list
+//     * @return footer position in footer data list
+//     */
+//    public int getFooterPosition(int position) {
+//        if (!isPositionFooter(position)) {
+//            if (XLog.isEnabled()) XLog.w("position %d is not a footer", position);
+//            return -1;
+//        }
+//        int itemCount = getItemCount();
+//        int footerCount = getFooterCount();
+//        if (footerCount > 0 && position >= itemCount - footerCount) {
+//            int footerPos = position - (itemCount - footerCount);
+//            if (XLog.isEnabled())
+//                XLog.v("adapter position[%d] -> footer position[%d]", position, footerPos);
+//            return footerPos;
+//        }
+//        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Footer!", position);
+//        return -1;
+//    }
 
     /**
      * @param footerPosition, footer position in footer data list
@@ -165,9 +175,13 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
     /**
      * @param position, position in adapter data list
      * @return group position in group data list
-     */
+     *//*
     public int getGroupPosition(int position) {
         if (XLog.isEnabled()) XLog.v("adapter target group position=%d", position);
+        if (!isPostionGroup(position)) {
+            if (XLog.isEnabled()) XLog.w("adapter position %d is not a group", position);
+            return -1;
+        }
         int groupCount = getGroupCount();
         int headerCount = getHeaderCount();
         int childCount = getChildCount();
@@ -189,7 +203,7 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
         }
         if (XLog.isEnabled()) XLog.v("adapter position[%d] is not Group!", position);
         return -1;
-    }
+    }*/
 
     /**
      * @param groupPosition,group position in group data list
@@ -206,29 +220,33 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
         return adapPos;
     }
 
-    /**
-     * @param position position in adapter data list
-     * @return groupchild position in groupchild data list
-     */
-    public int[] getGroupChildPosition(int position) {
-        int groupCount = getGroupCount();
-        if (groupCount > 0) {//some item is grouped.we must check group in the end
-            for (int i = 0; i < groupCount; i++) {
-                int groupAdapPosition = convertGroupPosition(i);
-                int groupChildCount = getGroupChildCount(i);
-                for (int j = 0; j < groupChildCount; j++) {
-                    int groupChildAdapPosition = groupAdapPosition + 1 + j;
-                    if (position == groupChildAdapPosition) {
-                        if (XLog.isEnabled())
-                            XLog.v("adapter position[%d] -> group[%d],child[%d]!", position, i, j);
-                        return new int[]{i, j};
-                    }
-                }
-            }
-        }
-        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not GroupChild!", position);
-        return new int[]{-1, -1};
-    }
+//    /**
+//     * @param position position in adapter data list
+//     * @return groupchild position in groupchild data list
+//     */
+//    public int[] getGroupChildPosition(int position) {
+//        if (!isPostionGroupChild(position)) {
+//            if (XLog.isEnabled()) XLog.w("position %d is not a group child", position);
+//            return new int[]{-1, -1};
+//        }
+//        int groupCount = getGroupCount();
+//        if (groupCount > 0) {//some item is grouped.we must check group in the end
+//            for (int i = 0; i < groupCount; i++) {
+//                int groupAdapPosition = convertGroupPosition(i);
+//                int groupChildCount = getGroupChildCount(i);
+//                for (int j = 0; j < groupChildCount; j++) {
+//                    int groupChildAdapPosition = groupAdapPosition + 1 + j;
+//                    if (position == groupChildAdapPosition) {
+//                        if (XLog.isEnabled())
+//                            XLog.v("adapter position[%d] -> group[%d],child[%d]!", position, i, j);
+//                        return new int[]{i, j};
+//                    }
+//                }
+//            }
+//        }
+//        if (XLog.isEnabled()) XLog.v("adapter position[%d] is not GroupChild!", position);
+//        return new int[]{-1, -1};
+//    }
 
     /**
      * @param groupPostion,group  position in group data list
@@ -238,9 +256,31 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
     public int convertGroupChildPosition(int groupPostion, int childPosition) {
         int adapPos = convertGroupPosition(groupPostion) + 1 + childPosition;
         if (XLog.isEnabled()) XLog.v("group child pos[%d, %d] -> adapter position[%d]",
-                                     groupPostion,
-                                     childPosition,
-                                     adapPos);
+                groupPostion,
+                childPosition,
+                adapPos);
         return adapPos;
     }
+
+    /*public abstract RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType,
+                                                                          ViewGroup parent);
+
+    public abstract void onBindStickyGroupViewHolder(int adapterPosition,
+                                                     int groupPosition,
+                                                     RecyclerView.ViewHolder stickyGroupViewHolder);
+
+    *//**
+     * 添加groupview之前需要计算y坐标，所以要提前获得groupview的高度
+     *//*
+    public abstract Point getStickyGroupViewHolderSize(int groupType);
+
+    public abstract boolean isPositionHeader(int adapPos);
+
+    public abstract boolean isPositionChild(int adapPos);
+
+    public abstract boolean isPostionGroup(int adapPos);
+
+    public abstract boolean isPostionGroupChild(int adapPos);
+
+    public abstract boolean isPositionFooter(int adapPos);*/
 }

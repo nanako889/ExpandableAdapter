@@ -22,6 +22,7 @@ import com.example.qbw.expandableadapter.holder.HeaderViewHolder;
 import com.example.qbw.expandableadapter.holder.ItemViewHolder;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.ExpandableAdapter;
+import com.qbw.recyclerview.expandable.StickyLayout;
 
 /**
  * @author QBW
@@ -29,13 +30,12 @@ import com.qbw.recyclerview.expandable.ExpandableAdapter;
  */
 
 
-public class Adapter extends ExpandableAdapter<BaseEntity> {
+public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayout.StickyListener {
 
     public Adapter(Context context) {
         super(context);
     }
 
-    //----------------------begin 必须要实现的方法--------------------------------
     @Override
     public BaseViewHolder<BaseEntity> onCreateViewHolder(ViewGroup parent, int viewType) {
         BaseViewHolder viewHolder = null;
@@ -88,9 +88,6 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         }
         return super.getItemViewType(position);
     }
-    //----------------------end 必须要实现的方法--------------------------------
-
-    //----------------------begin 使用StickyLayout需要实现的方法----------------
 
     @Override
     public RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType, ViewGroup parent) {
@@ -109,10 +106,10 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
     }
 
     @Override
-    public void onBindStickyGroupViewHolder(int groupPosition,
+    public void onBindStickyGroupViewHolder(int adapterPosition, int groupPosition,
                                             RecyclerView.ViewHolder stickyGroupViewHolder) {
         BaseViewHolder groupViewHolder = (BaseViewHolder) stickyGroupViewHolder;
-        groupViewHolder.bindData(convertGroupPosition(groupPosition), getGroup(groupPosition));
+        groupViewHolder.bindData(adapterPosition, getGroup(groupPosition));
     }
 
     @Override
@@ -121,15 +118,15 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
         switch (groupType) {
             case Type.GROUP:
                 point = new Point(0,
-                                  (int) mWrContext.get()
-                                                  .getResources()
-                                                  .getDimension(R.dimen.group_height));
+                        (int) mWrContext.get()
+                                .getResources()
+                                .getDimension(R.dimen.group_height));
                 break;
             case Type.GROUP1:
                 point = new Point(0,
-                                  (int) mWrContext.get()
-                                                  .getResources()
-                                                  .getDimension(R.dimen.group1_height));
+                        (int) mWrContext.get()
+                                .getResources()
+                                .getDimension(R.dimen.group1_height));
                 break;
             default:
                 break;
@@ -138,35 +135,9 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
     }
 
     @Override
-    public boolean isPositionHeader(int adapPos) {
-        return Type.HEADER == getItemViewType(adapPos);
-    }
-
-    @Override
-    public boolean isPositionChild(int adapPos) {
-        return Type.CHILD == getItemViewType(adapPos);
-    }
-
-    @Override
     public boolean isPostionGroup(int adapPos) {
         return Type.GROUP == getItemViewType(adapPos) || Type.GROUP1 == getItemViewType(adapPos);
     }
-
-    //    /**
-    //     * 返回的类型的值来源于getItemType
-    //     *
-    //     * @see #getItemViewType(int)
-    //     */
-    //    @Override
-    //    public int getGroupItemType(int groupPos) {
-    //        BaseEntity entity = getGroup(groupPos);
-    //        if (entity instanceof Group) {
-    //            return Type.GROUP;
-    //        } else if (entity instanceof Group1) {
-    //            return Type.GROUP1;
-    //        }
-    //        return -1;
-    //    }
 
     @Override
     public boolean isPostionGroupChild(int adapPos) {
@@ -177,21 +148,6 @@ public class Adapter extends ExpandableAdapter<BaseEntity> {
     public boolean isPositionFooter(int adapPos) {
         return Type.FOOTER == getItemViewType(adapPos);
     }
-
-    //    @Override
-    //    public Point getGroupSize(int groupPosition) {
-    //        WindowManager windowManager = (WindowManager) mWrContext.get().getSystemService(Context.WINDOW_SERVICE);
-    //        Display display = windowManager.getDefaultDisplay();
-    //        if (3 == groupPosition || 1 == groupPosition) {
-    //            return new Point(display.getWidth(),
-    //                    (int) mWrContext.get().getResources().getDimension(R.dimen.group1_height));
-    //        } else {
-    //            return new Point(display.getWidth(),
-    //                    (int) mWrContext.get().getResources().getDimension(R.dimen.group_height));
-    //        }
-    //    }
-
-    //----------------------end 使用StickyLayout需要实现的方法----------------
 
 
     public static class Type {
