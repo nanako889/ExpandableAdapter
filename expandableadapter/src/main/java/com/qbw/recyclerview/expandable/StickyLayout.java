@@ -1,7 +1,6 @@
 package com.qbw.recyclerview.expandable;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -58,13 +57,18 @@ public class StickyLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (XLog.isEnabled()) XLog.d("changed[%b]", changed);
+        if (XLog.isEnabled()) XLog.d("changed[%b],mStickyGroupY[%d]", changed, mStickyGroupY);
         if (getChildCount() > 1) {
             View childView = getChildAt(1);
-            childView.layout(0,
+            childView.layout(childView.getLeft(),
                     mStickyGroupY,
-                    childView.getMeasuredWidth(),
+                    childView.getRight(),
                     childView.getMeasuredHeight() + mStickyGroupY);
+            if (XLog.isEnabled()) {
+                Rect rect = new Rect();
+                childView.getHitRect(rect);
+                XLog.v("sticky group rect %s", rect.toString());
+            }
             removeCallbacks(mUpdateDelayRunn);
             postDelayed(mUpdateDelayRunn, getUpdateDelay());
         }
@@ -118,132 +122,104 @@ public class StickyLayout extends FrameLayout {
         mRecyclerView.addOnScrollListener(mStickyScrollListener);
     }
 
-    /**
-     * update会被频繁调用，为了避免内存抖动，将update里面用到的变量声明为成员变量
-     */
-
-    private int mGPos;
-    private int mGType;
-    private int mNGpos;
-    private int mNAdapPos;
-    private int mGCount;
-    /**
-     * 下一个要判断有没有交叉的holder的top坐标
-     */
-    private int mNT;
-    /**
-     * 当前悬浮Group的高度
-     */
-    private int mSH;
-    private int mStickGroupTargetY = -1;
-    private int mFVIPos;
-
     private boolean update() {
-        updateStickyGroupTargetY();
-        return updateStickyGroupY();
-    }
-
-    private void updateStickyGroupTargetY() {
-        mStickGroupTargetY = -1;
         if (!mStickyGroup) {
-            mStickyGroupY = -1;
-            return;
+            mStickyGroupY = 0;
+            return false;
         }
-        mFVIPos = PositionUtil.findFirstVisibleItemPosition(mRecyclerView);
-        if (RecyclerView.NO_POSITION == mFVIPos) {
+        int firstVisibleItemPosition = PositionUtil.findFirstVisibleItemPosition(mRecyclerView);
+        if (RecyclerView.NO_POSITION == firstVisibleItemPosition) {
             if (XLog.isEnabled()) XLog.w("no visible item");
-            return;
+            return false;
         }
-        mGPos = -1;
-        mGType = -1;
-        if (mStickyListener.isPostionGroup(mFVIPos)) {
-            mGPos = mExpandableAdapter.getGroupPosition(mFVIPos);
-            mGType = mExpandableAdapter.getItemViewType(mFVIPos);
-        } else if (mStickyListener.isPostionGroupChild(mFVIPos)) {
-            int[] poss = mExpandableAdapter.getGroupChildPosition(mFVIPos);
-            mGPos = poss[0];
-            mGType = mExpandableAdapter.getItemViewType(mFVIPos - (poss[1] + 1));
+        int groupPosition = -1;
+        int groupViewType = -1;
+        int groupAdapterPosition = -1;
+
+        if (mStickyListener.isPostionGroup(firstVisibleItemPosition)) {
+            groupAdapterPosition = firstVisibleItemPosition;
+            groupPosition = mExpandableAdapter.getGroupPosition(firstVisibleItemPosition);
+            groupViewType = mExpandableAdapter.getItemViewType(firstVisibleItemPosition);
+        } else if (mStickyListener.isPostionGroupChild(firstVisibleItemPosition)) {
+            int[] poss = mExpandableAdapter.getGroupChildPosition(firstVisibleItemPosition);
+            groupAdapterPosition = firstVisibleItemPosition - (poss[1] + 1);
+            groupPosition = poss[0];
+            groupViewType = mExpandableAdapter.getItemViewType(groupAdapterPosition);
         }
-        if (mGPos == -1 || mGType == -1) {
+        if (groupPosition == -1 || groupViewType == -1 || groupAdapterPosition == -1) {
             mStickyGroupHelper.removeGroupViewHolder(this);
-            mStickyGroupY = -1;
-            return;
+            mStickyGroupY = 0;
+            return false;
         }
 
-        mGCount = mExpandableAdapter.getGroupCount();
+        int groupCount = mExpandableAdapter.getGroupCount();
 
-        mNGpos = mGPos + 1;
-        mNAdapPos = -1;
+        int nextGroupPosition = groupPosition + 1;
+        int nextAdapterPosition = -1;
         RecyclerView.ViewHolder nextVh = null;//下一个需要判断是否相交的holder
-        if (mNGpos < mGCount) {//group下面还有group
-            mNAdapPos = mExpandableAdapter.convertGroupPosition(mNGpos);
-            if (XLog.isEnabled()) XLog.v("NextGroup, next adap pos [%d]", mNAdapPos);
+        if (nextGroupPosition < groupCount) {//group下面还有group
+            nextAdapterPosition = mExpandableAdapter.convertGroupPosition(nextGroupPosition);
+            if (XLog.isEnabled()) XLog.v("NextGroup, next adap pos [%d]", nextAdapterPosition);
         } else {
             int fcount = mExpandableAdapter.getFooterCount();
-            if (XLog.isEnabled()) XLog.w("group[%d] is the last.footer count [%d]", mGPos, fcount);
+            if (XLog.isEnabled())
+                XLog.d("group[%d] is the last.footer count [%d]", groupPosition, fcount);
             if (fcount > 0) {//group下面还有footer
-                mNAdapPos = mExpandableAdapter.convertFooterPosition(0);
-                if (XLog.isEnabled()) XLog.v("NextFooter, next adap pos [%d]", mNAdapPos);
+                nextAdapterPosition = mExpandableAdapter.convertFooterPosition(0);
+                if (XLog.isEnabled()) XLog.v("NextFooter, next adap pos [%d]", nextAdapterPosition);
             }
         }
 
-        if (mNAdapPos != -1) {
-            nextVh = mRecyclerView.findViewHolderForAdapterPosition(mNAdapPos);
+        if (nextAdapterPosition != -1) {
+            nextVh = mRecyclerView.findViewHolderForAdapterPosition(nextAdapterPosition);
         }
 
         if (nextVh == null) {
             if (XLog.isEnabled()) XLog.v("next viewholder is null");
-            mStickGroupTargetY = 0;
+            mStickyGroupY = 0;
         } else {
-            mNT = nextVh.itemView.getTop();
-            mSH = mStickyListener.getStickyGroupViewHolderSize(mGType).y;
-            if (XLog.isEnabled()) XLog.v("next rect top[%d], sticky rect height[%d]", mNT, mSH);
-            if (mNT >= mSH) {
-                mStickGroupTargetY = 0;
+            int nextHolderTop = nextVh.itemView.getTop();
+            int groupHolderHeight = mStickyListener.getStickyGroupViewHolderHeight(groupViewType);
+            if (XLog.isEnabled())
+                XLog.v("next rect top[%d], sticky rect height[%d]", nextHolderTop, groupHolderHeight);
+            if (nextHolderTop >= groupHolderHeight) {
+                mStickyGroupY = 0;
             } else {
-                mStickGroupTargetY = mNT - mSH;
+                mStickyGroupY = nextHolderTop - groupHolderHeight;
             }
         }
 
-        if (mStickyGroupHelper.getGroupType() != mGType) {
+        if (mStickyGroupHelper.getGroupType() != groupViewType) {
             mStickyGroupHelper.addGroupViewHolder(this,
-                    mFVIPos,
-                    mGPos,
-                    mGType,
-                    mGCount,
-                    mStickyListener.onCreateStickyGroupViewHolder(
-                            mGType,
-                            mRecyclerView),
+                    firstVisibleItemPosition,
+                    groupPosition,
+                    groupViewType,
+                    groupCount,
+                    mStickyListener.onCreateStickyGroupViewHolder(groupViewType, this),
                     mStickyListener);
-            if (XLog.isEnabled()) XLog.d("add group[%d] view", mGPos);
         } else {
-            mStickyGroupHelper.bindGroupViewHolder(mFVIPos, mGPos, mGType, mGCount, mStickyListener);
-            if (XLog.isEnabled()) XLog.v("bind group[%d] view", mGPos);
+            mStickyGroupHelper.bindGroupViewHolder(this, firstVisibleItemPosition,
+                    groupPosition,
+                    groupViewType,
+                    groupCount,
+                    mStickyListener);
         }
-    }
 
-    private boolean updateStickyGroupY() {
-        if (!mStickyGroup) {
-            mStickGroupTargetY = -1;
-            mStickyGroupY = -1;
-            return false;
+        if (getChildCount() > 1) {
+            if (getChildAt(1).getTop() == mStickyGroupY) {
+                if (XLog.isEnabled()) XLog.v("equal sticky group layout y [%d]", mStickyGroupY);
+                return false;
+            }
+            requestLayout();
+            return true;
         }
-        if (mStickyGroupY == mStickGroupTargetY) {
-            if (XLog.isEnabled()) XLog.v("equal sticky group layout y [%d]", mStickyGroupY);
-            return false;
-        }
-        mStickyGroupY = mStickGroupTargetY;
-        if (mStickyGroupY == -1) {
-            return false;
-        }
-        requestLayout();
-        return true;
+        return false;
     }
 
     private class StickyScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
+            if (XLog.isEnabled()) XLog.v("dx[%d],dy[%d]", dx, dy);
             if (update()) {
                 removeCallbacks(mUpdateDelayRunn);
             }
@@ -251,7 +227,7 @@ public class StickyLayout extends FrameLayout {
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
+            if (XLog.isEnabled()) XLog.v("newState[%d]", newState);
             if (update()) {
                 removeCallbacks(mUpdateDelayRunn);
             }
@@ -265,16 +241,20 @@ public class StickyLayout extends FrameLayout {
 
         boolean isPositionFooter(int adapterPosition);
 
-        RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType,
-                                                              ViewGroup parent);
+        RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType, ViewGroup parent);
 
         void onBindStickyGroupViewHolder(int adapterPosition,
                                          int groupPosition,
                                          RecyclerView.ViewHolder stickyGroupViewHolder);
 
         /**
-         * 添加groupview之前需要计算y坐标，所以要提前获得groupview的高度
+         * 返回指定group的高度
          */
-        Point getStickyGroupViewHolderSize(int groupType);
+        int getStickyGroupViewHolderHeight(int groupType);
+
+        /**
+         * 返回指定group的marginLeft和marginRight
+         */
+        int[] getStickyGroupViewHolderHorizontalMargin(int groupType);
     }
 }

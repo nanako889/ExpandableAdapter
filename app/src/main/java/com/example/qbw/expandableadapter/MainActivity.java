@@ -2,6 +2,7 @@ package com.example.qbw.expandableadapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.qbw.expandableadapter.entity.BaseEntity;
 import com.example.qbw.expandableadapter.entity.Child;
 import com.example.qbw.expandableadapter.entity.Footer;
 import com.example.qbw.expandableadapter.entity.Group;
@@ -18,6 +20,10 @@ import com.example.qbw.expandableadapter.entity.GroupChild;
 import com.example.qbw.expandableadapter.entity.Header;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.StickyLayout;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
@@ -44,6 +50,17 @@ public class MainActivity extends Activity {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(appCtx));
         mRecyclerView.setAdapter(mAdapter = new Adapter(appCtx));
+        mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                int adapPos = parent.getChildAdapterPosition(view);
+                if (Adapter.Type.GROUP1 == mAdapter.getItemViewType(adapPos)) {
+                    outRect.left = 50;
+                    outRect.right = 150;
+                }
+            }
+        });
 
         mStickyLayout.init(true);
 
@@ -53,7 +70,7 @@ public class MainActivity extends Activity {
                 if (l) {
                     // 如果你使用的是GridLayoutManager，那么Group必须是占有一整行，否则会报错
                     GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this.getApplicationContext(),
-                                                                                3);
+                            3);
                     gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
@@ -71,6 +88,7 @@ public class MainActivity extends Activity {
         });
         test();
         //test1();
+        //test2();
     }
 
     private void initView() {
@@ -79,11 +97,29 @@ public class MainActivity extends Activity {
         mStickyLayout = (StickyLayout) findViewById(R.id.stickylayout);
     }
 
+    private void test2() {
+        mAdapter.addGroup(new Group("g1"));
+        mAdapter.addGroupChild(0, new GroupChild("gc"));
+        mAdapter.addGroup(new Group("g2"));
+        mAdapter.addGroupChild(1, new GroupChild("gc"));
+        mAdapter.addGroup(new Group("g3"));
+        mAdapter.addGroupChild(2, new GroupChild("gc"));
+        mAdapter.addGroup(new Group("g4"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.addGroupChild(3, new GroupChild("gc"));
+    }
+
     private void test1() {
-        for (int i=0;i<100;i++) {
-            mAdapter.addGroup(new Group("group"+i));
-            for (int j=0;j<100;j++) {
-                mAdapter.addGroupChild(i, new GroupChild("groupchild"+j));
+        for (int i = 0; i < 100; i++) {
+            mAdapter.addGroup(new Group("group" + i));
+            for (int j = 0; j < 100; j++) {
+                mAdapter.addGroupChild(i, new GroupChild("groupchild" + j));
             }
         }
     }
@@ -106,6 +142,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 mAdapter.addGroupChild(0, new GroupChild("groupchild1"));
+
             }
         }, 5000);
 
@@ -132,7 +169,22 @@ public class MainActivity extends Activity {
             public void run() {
                 for (int i = 0; i < 5; i++) {
                     mAdapter.addChild(new Child("child" + i));
+
+
                 }
+                List<Child> groupChildren = new ArrayList<Child>();
+                groupChildren.add(new Child("child-3"));
+                groupChildren.add(new Child("child-3"));
+                groupChildren.add(new Child("child-3"));
+                mAdapter.addChild(3, Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
+
+                groupChildren = new ArrayList<Child>();
+                groupChildren.add(new Child("child-0"));
+                groupChildren.add(new Child("child-0"));
+                groupChildren.add(new Child("child-0"));
+                mAdapter.addChild(0, Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
+                mAdapter.addChild(-1,  new Child("err"));
+                mAdapter.addChild(100, new Child("end"));
             }
         }, 10000);
     }

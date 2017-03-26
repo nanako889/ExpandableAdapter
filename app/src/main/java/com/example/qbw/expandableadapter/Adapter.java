@@ -32,8 +32,10 @@ import com.qbw.recyclerview.expandable.StickyLayout;
 
 public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayout.StickyListener {
 
+    private Context mContext;
+
     public Adapter(Context context) {
-        super(context);
+        mContext = context;
     }
 
     @Override
@@ -41,22 +43,22 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
         BaseViewHolder viewHolder = null;
         switch (viewType) {
             case Type.HEADER:
-                viewHolder = new HeaderViewHolder(mWrContext.get(), parent);
+                viewHolder = new HeaderViewHolder(mContext, parent);
                 break;
             case Type.CHILD:
-                viewHolder = new ItemViewHolder(mWrContext.get(), parent);
+                viewHolder = new ItemViewHolder(mContext, parent);
                 break;
             case Type.GROUP:
-                viewHolder = new GroupViewHolder(mWrContext.get(), parent);
+                viewHolder = new GroupViewHolder(mContext, parent);
                 break;
             case Type.GROUP_CHILD:
-                viewHolder = new GroupItemViewHolder(mWrContext.get(), parent);
+                viewHolder = new GroupItemViewHolder(mContext, parent);
                 break;
             case Type.FOOTER:
-                viewHolder = new FooterViewHolder(mWrContext.get(), parent);
+                viewHolder = new FooterViewHolder(mContext, parent);
                 break;
             case Type.GROUP1:
-                viewHolder = new Group1ViewHolder(mWrContext.get(), parent);
+                viewHolder = new Group1ViewHolder(mContext, parent);
                 break;
             default:
                 break;
@@ -94,10 +96,10 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
         RecyclerView.ViewHolder viewHolder = null;
         switch (groupType) {
             case Type.GROUP:
-                viewHolder = new GroupViewHolder(mWrContext.get(), parent);
+                viewHolder = new GroupViewHolder(mContext, parent);
                 break;
             case Type.GROUP1:
-                viewHolder = new Group1ViewHolder(mWrContext.get(), parent);
+                viewHolder = new Group1ViewHolder(mContext, parent);
                 break;
             default:
                 break;
@@ -113,25 +115,28 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
     }
 
     @Override
-    public Point getStickyGroupViewHolderSize(int groupType) {//宽度可以随便写，没有用到
-        Point point = null;
+    public int getStickyGroupViewHolderHeight(int groupType) {//高度必须返回
         switch (groupType) {
             case Type.GROUP:
-                point = new Point(0,
-                        (int) mWrContext.get()
-                                .getResources()
-                                .getDimension(R.dimen.group_height));
-                break;
+                return (int) mContext
+                        .getResources()
+                        .getDimension(R.dimen.group_height);
             case Type.GROUP1:
-                point = new Point(0,
-                        (int) mWrContext.get()
+                return
+                        (int) mContext
                                 .getResources()
-                                .getDimension(R.dimen.group1_height));
-                break;
-            default:
-                break;
+                                .getDimension(R.dimen.group1_height);
         }
-        return point;
+        return 0;
+    }
+
+    @Override
+    public int[] getStickyGroupViewHolderHorizontalMargin(int groupType) {
+        switch (groupType) {
+            case Type.GROUP1:
+                return new int[]{50, 150};//根据你的实际margin返回，必须与RecyclerView中对应GroupHolder的margin值一直，没有就返回null
+        }
+        return null;
     }
 
     @Override

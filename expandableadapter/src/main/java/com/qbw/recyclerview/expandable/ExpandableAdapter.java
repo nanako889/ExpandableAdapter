@@ -1,9 +1,7 @@
 package com.qbw.recyclerview.expandable;
 
 import android.content.Context;
-import android.graphics.Point;
-import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
+import android.support.annotation.CallSuper;
 
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.base.BaseExpandableAdapter;
@@ -24,8 +22,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private Map<T, List<T>> mGroupChildMap;
     private List<T> mFooterList;
 
-    public ExpandableAdapter(Context context) {
-        super(context);
+    public ExpandableAdapter() {
         mList = new ArrayList<>();
         mHeaderList = new ArrayList<>();
         mChildList = new ArrayList<>();
@@ -106,10 +103,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (null == headerList || headerList.isEmpty()) {
             if (XLog.isEnabled()) XLog.e("wrong param");
             return -1;
+        } else if (headerPosition < 0) {
+            if (XLog.isEnabled()) XLog.e("invalid header position %d", headerPosition);
+            return -1;
         }
         int oldHeaderCount = getHeaderCount();
 
-        if (!checkHeaderPosition(headerPosition)) {
+        if (headerPosition > oldHeaderCount) {
             headerPosition = oldHeaderCount;
         }
         if (XLog.isEnabled()) XLog.d("headerPosition = %d", headerPosition);
@@ -232,14 +232,17 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (null == childList || childList.isEmpty()) {
             if (XLog.isEnabled()) XLog.e("wrong param tList");
             return -1;
+        } else if (childPosition < 0) {
+            if (XLog.isEnabled()) XLog.e("invalid child position %d", childPosition);
+            return -1;
         }
 
         int childCount = getChildCount();
-        if (!checkChildPosition(childPosition)) {
+        if (childPosition > childCount) {
             childPosition = childCount;
         }
         mChildList.addAll(childPosition, childList);
-        int adapPos = convertChildPosition(childPosition);
+        int adapPos = convertChildPositionInner(childPosition);
         mList.addAll(adapPos, childList);
         int addSize = childList.size();
         if (XLog.isEnabled()) XLog.v("notify chnaged item from %d, size = %d", adapPos, addSize);
@@ -333,6 +336,14 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return mChildList.indexOf(getItem(adapterPosition));
     }
 
+    public int convertChildPosition(int childPosition) {
+        if (!checkChildPosition(childPosition)) {
+            if (XLog.isEnabled()) XLog.e("invalid child position %d", childPosition);
+            return -1;
+        }
+        return mList.indexOf(mChildList.get(childPosition));
+    }
+
     public final int addGroup(T t) {
         return addGroup(getGroupCount(), t);
     }
@@ -359,7 +370,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         mGroupList.add(targetPosition, t);
         mGroupChildMap.put(t, new ArrayList<T>());
-        int adapPos = convertGroupPosition(targetPosition);
+        int adapPos = convertGroupPositionInner(targetPosition);
         mList.add(adapPos, t);
         if (XLog.isEnabled()) XLog.v("now group count is %d", getGroupCount());
         notifyItemInserted(adapPos);
@@ -383,7 +394,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
      * @param groupPosition
      */
     public final void removeGroup(int groupPosition) {
-        _removeGroup(groupPosition, 0, 0, true);
+        removeGroup(groupPosition, 0, 0, true);
     }
 
     /**
@@ -398,10 +409,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     /**
      * @param removeGroup true means remove group item(ignore child parameters, remove whole group include all child); false means not
      */
-    private final void _removeGroup(int groupPosition,
-                                    int childStarPosition,
-                                    int count,
-                                    boolean removeGroup) {
+    private final void removeGroup(int groupPosition,
+                                   int childStarPosition,
+                                   int count,
+                                   boolean removeGroup) {
         if (!checkGroupPosition(groupPosition)) {
             return;
         }
@@ -457,11 +468,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void updateGroup(int groupPosition, T t) {
-        if (!checkGroupPosition(groupPosition)) {
+        int adapPos = convertGroupPosition(groupPosition);
+        if (adapPos == -1) {
             return;
         }
-
-        int adapPos = convertGroupPosition(groupPosition);
         mGroupList.set(groupPosition, t);
         mList.set(adapPos, t);
         notifyItemChanged(adapPos);
@@ -473,6 +483,14 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             return -1;
         }
         return mGroupList.indexOf(getItem(adapterPosition));
+    }
+
+    public int convertGroupPosition(int groupPosition) {
+        if (!checkGroupPosition(groupPosition)) {
+            if (XLog.isEnabled()) XLog.e("invalid group position %d", groupPosition);
+            return -1;
+        }
+        return mList.indexOf(mGroupList.get(groupPosition));
     }
 
     /**
@@ -495,7 +513,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             return;
         }
 
-        int adapPos = convertGroupPosition(groupPosition);
+        int adapPos = convertGroupPositionInner(groupPosition);
         int childCount = getGroupChildCount(groupPosition);
         if (updateGroup) {
             notifyItemRangeChanged(adapPos, childCount + 1);
@@ -525,15 +543,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return true;
     }
 
-    public final void addGroupChild(int groupPosition, T t) {
+    public final int[] addGroupChild(int groupPosition, T t) {
         if (!checkGroupPosition(groupPosition)) {
-            return;
+            return new int[]{-1, -1};
         }
-        mGroupChildMap.get(mGroupList.get(groupPosition)).add(t);
-        int adapPos = convertGroupChildPosition(groupPosition,
-                getGroupChildCount(groupPosition) - 1);
-        mList.add(adapPos, t);
-        notifyItemInserted(adapPos);
+        ArrayList<T> ts = new ArrayList<>();
+        ts.add(t);
+        return addGroupChild(groupPosition, getGroupChildCount(groupPosition), ts);
     }
 
     @Deprecated
@@ -541,37 +557,38 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         addGroupChild(groupPosition, childPos, t);
     }
 
-    public final void addGroupChild(int groupPosition, int childPos, T t) {
-        if (!checkGroupPosition(groupPosition)) {
-            return;
-        }
-        int groupChildCount = getGroupChildCount(groupPosition);
-        if (childPos >= groupChildCount) {
-            addGroupChild(groupPosition, t);
-        } else if (childPos >= 0) {
-            mGroupChildMap.get(mGroupList.get(groupPosition)).add(childPos, t);
-            int adapPos = convertGroupChildPosition(groupPosition, childPos);
-            mList.add(adapPos, t);
-            notifyItemInserted(adapPos);
-        } else {
-            if (XLog.isEnabled()) XLog.e("wrong targetChildPos = %d", childPos);
-        }
+    public final int[] addGroupChild(int groupPosition, int childPosition, T t) {
+        ArrayList<T> ts = new ArrayList<>();
+        ts.add(t);
+        return addGroupChild(groupPosition, childPosition, ts);
     }
 
-    public final void addGroupChild(int groupPosition, List<T> childList) {
+    public final int[] addGroupChild(int groupPosition, List<T> childList) {
         if (!checkGroupPosition(groupPosition)) {
-            return;
+            return new int[]{-1, -1};
         }
-        if (null == childList || childList.isEmpty()) {
-            if (XLog.isEnabled()) XLog.e("invalid child mList");
-            return;
-        }
+        return addGroupChild(groupPosition, getGroupChildCount(groupPosition), childList);
+    }
 
+    public final int[] addGroupChild(int groupPosition, int childPosition, List<T> childList) {
+        if (!checkGroupPosition(groupPosition)) {
+            return new int[]{-1, -1};
+        } else if (childList == null || childList.isEmpty()) {
+            if (XLog.isEnabled()) XLog.e("invalid child mList");
+            return new int[]{-1, -1};
+        } else if (childPosition < 0) {
+            if (XLog.isEnabled()) XLog.e("invalid child position %d", childPosition);
+            return new int[]{-1, -1};
+        }
         int oldGroupChildCount = getGroupChildCount(groupPosition);
-        mGroupChildMap.get(mGroupList.get(groupPosition)).addAll(childList);
-        int adapPos = convertGroupChildPosition(groupPosition, oldGroupChildCount);
-        mList.addAll(adapPos, childList);
-        notifyItemRangeInserted(adapPos, childList.size());
+        if (childPosition > oldGroupChildCount) {
+            childPosition = oldGroupChildCount;
+        }
+        mGroupChildMap.get(mGroupList.get(groupPosition)).addAll(childPosition, childList);
+        int adapterPosition = convertGroupChildPositionInner(groupPosition, childPosition);
+        mList.addAll(adapterPosition, childList);
+        notifyItemRangeInserted(adapterPosition, childList.size());
+        return new int[]{groupPosition, childPosition};
     }
 
     public final T getGroupChild(int groupPosition, int childPosition) {
@@ -587,11 +604,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
      * @param count              item count to remove
      */
     public final void removeGroupChild(int groupPosition, int childStartPosition, int count) {
-        _removeGroup(groupPosition, childStartPosition, count, false);
+        removeGroup(groupPosition, childStartPosition, count, false);
     }
 
     public final void removeGroupChild(int groupPosition, int childPosition) {
-        _removeGroup(groupPosition, childPosition, 1, false);
+        removeGroup(groupPosition, childPosition, 1, false);
     }
 
     /**
@@ -617,7 +634,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         int groupChildCount = getGroupChildCount(groupPosition);
         if (groupChildCount > 0) {
-            _removeGroup(groupPosition,
+            removeGroup(groupPosition,
                     childStarPosition,
                     groupChildCount - childStarPosition,
                     false);
@@ -695,6 +712,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return new int[]{-1, -1};
     }
 
+    public int convertGroupChildPosition(int groupPosition, int childPosition) {
+        if (!checkGroupChildPosition(groupPosition, childPosition)) {
+            return -1;
+        }
+        return mList.indexOf(mGroupChildMap.get(mGroupList.get(groupPosition)).get(childPosition));
+    }
+
     public final void addFooter(T footer) {
         List<T> ts = new ArrayList<>();
         ts.add(footer);
@@ -711,15 +735,18 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         addFooter(position, ts);
     }
 
-    public final void addFooter(int footerPosition, List<T> footerList) {
+    public final int addFooter(int footerPosition, List<T> footerList) {
 
         if (null == footerList || footerList.isEmpty()) {
             if (XLog.isEnabled()) XLog.e("wrong param");
-            return;
+            return -1;
+        } else if (footerPosition < 0) {
+            if (XLog.isEnabled()) XLog.e("invalid footer position %d", footerPosition);
+            return -1;
         }
         int oldFooterCount = getFooterCount();
 
-        if (!checkFooterPosition(footerPosition)) {
+        if (footerPosition > oldFooterCount) {
             footerPosition = oldFooterCount;
         }
         if (XLog.isEnabled()) XLog.d("footerPosition = %d", footerPosition);
@@ -729,6 +756,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         int addSize = footerList.size();
         if (XLog.isEnabled()) XLog.v("notify item from %d, count = %d", adapPos, addSize);
         notifyItemRangeInserted(adapPos, addSize);
+        return footerPosition;
     }
 
     public final T getFooter(int footerPosition) {

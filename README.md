@@ -42,17 +42,27 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.1.0'
+compile 'com.qbw.recyclerview:expandableadapter:3.2.0'
 
+
+# v3.2.0
+
+1.构造函数参数去掉Context（如果需要，添加到自己的Adapter基类中）
+
+2.添加回调函数返回StickyGroupViewHolder的水平margin值
+
+3.优化convertXXXPosition函数
 
 # v3.1.0
 
 1.将StickyLayout需要的回调抽离成独立的一个StickyListener
+
 2.优化getXXXPosition函数
 
 # v3.0.0
 
 1.重写group悬浮逻辑
+
 2.修复v2.9.0bug
 
 # v2.10.0
