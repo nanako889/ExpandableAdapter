@@ -472,6 +472,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (adapPos == -1) {
             return;
         }
+        T oldGroup = mGroupList.get(groupPosition);
+        List oldGroupChild = mGroupChildMap.get(oldGroup);
+        mGroupChildMap.remove(oldGroup);
+        mGroupChildMap.put(t, oldGroupChild);
         mGroupList.set(groupPosition, t);
         mList.set(adapPos, t);
         notifyItemChanged(adapPos);

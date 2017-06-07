@@ -52,7 +52,10 @@ public class MainActivity extends Activity {
         mRecyclerView.setAdapter(mAdapter = new Adapter(appCtx));
         mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            public void getItemOffsets(Rect outRect,
+                                       View view,
+                                       RecyclerView parent,
+                                       RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 int adapPos = parent.getChildAdapterPosition(view);
                 if (Adapter.Type.GROUP1 == mAdapter.getItemViewType(adapPos)) {
@@ -70,7 +73,7 @@ public class MainActivity extends Activity {
                 if (l) {
                     // 如果你使用的是GridLayoutManager，那么Group必须是占有一整行，否则会报错
                     GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this.getApplicationContext(),
-                            3);
+                                                                                3);
                     gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
@@ -86,9 +89,9 @@ public class MainActivity extends Activity {
             }
 
         });
-        test();
+        //test();
         //test1();
-        //test2();
+        test2();
     }
 
     private void initView() {
@@ -113,6 +116,10 @@ public class MainActivity extends Activity {
         mAdapter.addGroupChild(3, new GroupChild("gc"));
         mAdapter.addGroupChild(3, new GroupChild("gc"));
         mAdapter.addGroupChild(3, new GroupChild("gc"));
+        mAdapter.updateGroup(0, new Group("g1 update"));
+        XLog.d("group child count:%d, %s",
+               mAdapter.getGroupChildCount(0),
+               mAdapter.getGroupChild(0, 0).text);
     }
 
     private void test1() {
@@ -176,14 +183,16 @@ public class MainActivity extends Activity {
                 groupChildren.add(new Child("child-3"));
                 groupChildren.add(new Child("child-3"));
                 groupChildren.add(new Child("child-3"));
-                mAdapter.addChild(3, Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
+                mAdapter.addChild(3,
+                                  Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
 
                 groupChildren = new ArrayList<Child>();
                 groupChildren.add(new Child("child-0"));
                 groupChildren.add(new Child("child-0"));
                 groupChildren.add(new Child("child-0"));
-                mAdapter.addChild(0, Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
-                mAdapter.addChild(-1,  new Child("err"));
+                mAdapter.addChild(0,
+                                  Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
+                mAdapter.addChild(-1, new Child("err"));
                 mAdapter.addChild(100, new Child("end"));
             }
         }, 10000);

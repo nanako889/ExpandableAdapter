@@ -15,7 +15,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * @author qbw
- * @createtime 2016/04/22 14:19
+ * 2016/04/22 14:19
  * 如果要显示悬浮的Group，需要将RecyclerView包裹到此布局中
  */
 

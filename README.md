@@ -42,8 +42,12 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.2.0'
+compile 'com.qbw.recyclerview:expandableadapter:3.2.1'
 
+
+# V3.2.1
+
+1.修复updateGroup导致getGroupChildCount空指针问题
 
 # v3.2.0
 
