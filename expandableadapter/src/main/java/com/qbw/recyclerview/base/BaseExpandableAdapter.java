@@ -49,7 +49,7 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
      * @param headerPosition, header position in header data list
      * @return position in adapter data list
      */
-    public int convertHeaderPosition(int headerPosition) {
+    protected int convertHeaderPositionInner(int headerPosition) {
         return headerPosition;
     }
 
@@ -68,7 +68,7 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
      * @param footerPosition, footer position in footer data list
      * @return position in adapter data list
      */
-    public int convertFooterPosition(int footerPosition) {
+    protected int convertFooterPositionInner(int footerPosition) {
         int adapPos = footerPosition + (getItemCount() - getFooterCount());
         if (XLog.isEnabled())
             XLog.v("footer position[%d] -> adapter position[%d]", footerPosition, adapPos);

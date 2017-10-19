@@ -42,8 +42,19 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.2.1'
+compile 'com.qbw.recyclerview:expandableadapter:3.4.0'
 
+# V3.4.0
+
+1.增加几个常用函数
+
+# V3.3.2
+
+1.修复bug
+
+# V3.3.0
+
+1.增加一些常用的函数
 
 # V3.2.1
 

@@ -89,8 +89,8 @@ public class MainActivity extends Activity {
             }
 
         });
-        //test();
-        //test1();
+        test();
+        test1();
         test2();
     }
 
