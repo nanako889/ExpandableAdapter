@@ -42,7 +42,11 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.4.0'
+compile 'com.qbw.recyclerview:expandableadapter:3.5.0'
+
+# V3.5.0
+
+1.增加函数swapItem（使用RecyclerView 的 ItemTouchHelper 时会用到）
 
 # V3.4.0
 

@@ -4,6 +4,7 @@ import com.qbw.log.XLog;
 import com.qbw.recyclerview.base.BaseExpandableAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,50 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         } else {
             if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", adapPos);
         }
+    }
+
+    public final void swapItem(int sourcePosition, int targetPosition) {
+        if(sourcePosition < 0 || sourcePosition >= getItemCount()) {
+            if (XLog.isEnabled()) XLog.e("invalid sourcePosition:%d", sourcePosition);
+            return;
+        } else if(targetPosition < 0 || targetPosition >= getItemCount()) {
+            if (XLog.isEnabled()) XLog.e("invalid targetPosition:%d", targetPosition);
+            return;
+        }
+        T source = getItem(sourcePosition);
+        T target = getItem(targetPosition);
+        int pos;
+        int[] poss;
+        if (-1 != (pos = getChildPosition(sourcePosition))) {
+            mChildList.set(pos, target);
+        } else if (-1 != (pos = getFooterPosition(sourcePosition))) {
+            mFooterList.set(pos, target);
+        } else if (-1 != (pos = getHeaderPosition(sourcePosition))) {
+            mHeaderList.set(pos, target);
+        } else if (-1 != (poss = getGroupChildPosition(sourcePosition))[0]) {
+            mGroupChildMap.get(mGroupList.get(poss[0])).set(poss[1], target);
+        } else if (-1 != (pos = getGroupPosition(sourcePosition))) {
+            mGroupList.set(pos, target);
+        } else {
+            if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", sourcePosition);
+        }
+
+        if (-1 != (pos = getChildPosition(targetPosition))) {
+            mChildList.set(pos, source);
+        } else if (-1 != (pos = getFooterPosition(targetPosition))) {
+            mFooterList.set(pos, source);
+        } else if (-1 != (pos = getHeaderPosition(targetPosition))) {
+            mHeaderList.set(pos, source);
+        } else if (-1 != (poss = getGroupChildPosition(targetPosition))[0]) {
+            mGroupChildMap.get(mGroupList.get(poss[0])).set(poss[1], source);
+        } else if (-1 != (pos = getGroupPosition(targetPosition))) {
+            mGroupList.set(pos, source);
+        } else {
+            if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", sourcePosition);
+        }
+
+        Collections.swap(mList, sourcePosition, targetPosition);
+        notifyItemMoved(sourcePosition, targetPosition);
     }
 
     public final void updateItem(int adapPos, T t) {
