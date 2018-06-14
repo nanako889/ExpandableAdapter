@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
         InnerItemTouchHelper touchHelper = new InnerItemTouchHelper(new InnerItemTouchCallback());
         touchHelper.attachToRecyclerView(mRecyclerView);
 
-        mStickyLayout.init(true);
+        mStickyLayout.init(false);
 
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override

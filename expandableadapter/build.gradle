@@ -24,3 +24,30 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.qbw.log:xlog:1.7.1'
 }
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'expandableadapter'
+
+    publishedGroupId = 'com.qbw.recyclerview'
+    libraryName = 'expandableadapter'
+    artifact = 'expandableadapter'
+
+    libraryDescription = 'Base RecyclerView.Adapter, support header, child, group, groupchild, footer.'
+
+    siteUrl = 'https://github.com/qbwjly/ExpandableAdapter'
+    gitUrl = 'https://github.com/qbwjly/ExpandableAdapter.git'
+
+    libraryVersion = '3.5.0'
+
+    developerId = 'qinbaowei'
+    developerName = 'qinbaowei'
+    developerEmail = 'qbaowei@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+
+    apply from: 'bintray_install.gradle'
+    apply from: 'bintray_upload.gradle'
+}
