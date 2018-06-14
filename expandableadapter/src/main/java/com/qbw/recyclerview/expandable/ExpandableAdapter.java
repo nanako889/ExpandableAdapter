@@ -84,29 +84,29 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         int flagTarget = 0;
 
         if (-1 != (posSource = getChildPosition(source))) {
-            flagSource &= 1;
+            flagSource |= 1;
         } else if (-1 != (posSource = getFooterPosition(source))) {
-            flagSource &= 1<<1;
+            flagSource |= 1<<1;
         } else if (-1 != (posSource = getHeaderPosition(source))) {
-            flagSource &= 1<<2;
+            flagSource |= 1<<2;
         } else if (-1 != (possSource = getGroupChildPosition(source))[0]) {
-            flagSource &= 1<<3;
+            flagSource |= 1<<3;
         } else if (-1 != (posSource = getGroupPosition(source))) {
-            flagSource &= 1<<4;
+            flagSource |= 1<<4;
         } else {
             if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", sourcePosition);
         }
 
         if (-1 != (posTarget = getChildPosition(target))) {
-            flagTarget &= 1;
+            flagTarget |= 1;
         } else if (-1 != (posTarget = getFooterPosition(target))) {
-            flagTarget &= 1<<1;
+            flagTarget |= 1<<1;
         } else if (-1 != (posTarget = getHeaderPosition(target))) {
-            flagTarget &= 1<<2;
+            flagTarget |= 1<<2;
         } else if (-1 != (possTarget = getGroupChildPosition(target))[0]) {
-            flagTarget &= 1<<3;
+            flagTarget |= 1<<3;
         } else if (-1 != (posTarget = getGroupPosition(target))) {
-            flagTarget &= 1<<4;
+            flagTarget |= 1<<4;
         } else {
             if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", sourcePosition);
         }
@@ -115,11 +115,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             mChildList.set(posSource, target);
         } else if ((flagSource & (1 << 1)) != 0) {
             mFooterList.set(posSource, target);
-        } else if ((flagSource & (1 << 1)) != 0) {
+        } else if ((flagSource & (1 << 2)) != 0) {
             mHeaderList.set(posSource, target);
-        } else if ((flagSource & (1 << 1)) != 0) {
+        } else if ((flagSource & (1 << 3)) != 0) {
             mGroupChildMap.get(mGroupList.get(possSource[0])).set(possSource[1], target);
-        } else if ((flagSource & (1 << 1)) != 0) {
+        } else if ((flagSource & (1 << 4)) != 0) {
             mGroupList.set(posSource, target);
         }
 
@@ -127,11 +127,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             mChildList.set(posTarget, source);
         } else if ((flagTarget & (1 << 1)) != 0) {
             mFooterList.set(posTarget, source);
-        } else if ((flagTarget & (1 << 1)) != 0) {
+        } else if ((flagTarget & (1 << 2)) != 0) {
             mHeaderList.set(posTarget, source);
-        } else if ((flagTarget & (1 << 1)) != 0) {
+        } else if ((flagTarget & (1 << 3)) != 0) {
             mGroupChildMap.get(mGroupList.get(possTarget[0])).set(possTarget[1], source);
-        } else if ((flagTarget & (1 << 1)) != 0) {
+        } else if ((flagTarget & (1 << 4)) != 0) {
             mGroupList.set(posTarget, source);
         }
 

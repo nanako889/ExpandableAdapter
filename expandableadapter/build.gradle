@@ -8,7 +8,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 22
         versionCode 1
-        versionName "3.5.1"
+        versionName "3.5.2"
     }
     buildTypes {
         release {
@@ -38,7 +38,7 @@ ext {
     siteUrl = 'https://github.com/qbwjly/ExpandableAdapter'
     gitUrl = 'https://github.com/qbwjly/ExpandableAdapter.git'
 
-    libraryVersion = '3.5.1'
+    libraryVersion = '3.5.2'
 
     developerId = 'qinbaowei'
     developerName = 'qinbaowei'

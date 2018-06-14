@@ -42,9 +42,9 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.5.1'
+compile 'com.qbw.recyclerview:expandableadapter:3.5.2'
 
-# V3.5.1
+# V3.5.2
 
 1.swapItem bug fix
 
