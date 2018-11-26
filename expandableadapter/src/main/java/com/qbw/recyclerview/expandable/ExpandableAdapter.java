@@ -1048,6 +1048,20 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return p;
     }
 
+    public final int getLastHeaderPositionByViewType(int viewType) {
+        int p = -1;
+        int i;
+        int hsize = getHeaderCount();
+        for (i = hsize - 1; i >= 0; i--) {
+            if (viewType == getItemViewType(getHeader(i)) || viewType == getItemViewType(
+                    getItemPosition(getHeader(i)))) {
+                p = i;
+                break;
+            }
+        }
+        return p;
+    }
+
     public final void removeHeaderByViewType(int viewType) {
         int p = getHeaderPositionByViewType(viewType);
         if (p != -1) {
@@ -1057,11 +1071,62 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
     }
 
+    public final int getChildPositionByViewType(int viewType) {
+        int p = -1;
+        int i;
+        int csize = getChildCount();
+        for (i = 0; i < csize; i++) {
+            if (viewType == getItemViewType(getChild(i)) || viewType == getItemViewType(
+                    getItemPosition(getChild(i)))) {
+                p = i;
+                break;
+            }
+        }
+        return p;
+    }
+
+    public final int getLastChildPositionByViewType(int viewType) {
+        int p = -1;
+        int i;
+        int csize = getChildCount();
+        for (i = csize - 1; i >= 0; i--) {
+            if (viewType == getItemViewType(getChild(i)) || viewType == getItemViewType(
+                    getItemPosition(getChild(i)))) {
+                p = i;
+                break;
+            }
+        }
+        return p;
+    }
+
+    public final void removeChildByViewType(int viewType) {
+        int p = getChildPositionByViewType(viewType);
+        if (p != -1) {
+            removeChild(p);
+        } else {
+            XLog.w("no child's viewType is %d", viewType);
+        }
+    }
+
     public final int getGroupPositionByViewType(int viewType) {
         int p = -1;
         int i;
         int gsize = getGroupCount();
         for (i = 0; i < gsize; i++) {
+            if (viewType == getItemViewType(getGroup(i)) || viewType == getItemViewType(
+                    getItemPosition(getGroup(i)))) {
+                p = i;
+                break;
+            }
+        }
+        return p;
+    }
+
+    public final int getLastGroupPositionByViewType(int viewType) {
+        int p = -1;
+        int i;
+        int gsize = getGroupCount();
+        for (i = gsize - 1; i >= 0; i--) {
             if (viewType == getItemViewType(getGroup(i)) || viewType == getItemViewType(
                     getItemPosition(getGroup(i)))) {
                 p = i;
@@ -1080,12 +1145,49 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
     }
 
+    public final int getFooterPositionByViewType(int viewType) {
+        int p = -1;
+        int i;
+        int fsize = getFooterCount();
+        for (i = 0; i < fsize; i++) {
+            if (viewType == getItemViewType(getFooter(i)) || viewType == getItemViewType(
+                    getItemPosition(getFooter(i)))) {
+                p = i;
+                break;
+            }
+        }
+        return p;
+    }
+
+    public final int getLastFooterPositionByViewType(int viewType) {
+        int p = -1;
+        int i;
+        int fsize = getFooterCount();
+        for (i = fsize - 1; i >= 0; i--) {
+            if (viewType == getItemViewType(getFooter(i)) || viewType == getItemViewType(
+                    getItemPosition(getFooter(i)))) {
+                p = i;
+                break;
+            }
+        }
+        return p;
+    }
+
+    public final void removeFooterByViewType(int viewType) {
+        int p = getFooterPositionByViewType(viewType);
+        if (p != -1) {
+            removeFooter(p);
+        } else {
+            XLog.w("no footer's viewType is %d", viewType);
+        }
+    }
+
     public void setHeaderViewTypePositionConstraints(List<Integer> headerViewTypePositionConstraints) {
         mHeaderViewTypePositionConstraints = headerViewTypePositionConstraints;
     }
 
     public int getCorrectHeaderConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(mHeaderViewTypePositionConstraints, currViewType);
+        return getCorrectConstraintPosition(0, mHeaderViewTypePositionConstraints, currViewType);
     }
 
     public void setChildViewTypePositionConstraints(List<Integer> childViewTypePositionConstraints) {
@@ -1093,7 +1195,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public int getCorrectChildConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(mChildViewTypePositionConstraints, currViewType);
+        return getCorrectConstraintPosition(1, mChildViewTypePositionConstraints, currViewType);
     }
 
     public void setGroupViewTypePositionConstraints(List<Integer> groupViewTypePositionConstraints) {
@@ -1101,7 +1203,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public int getCorrectGroupConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(mGroupViewTypePositionConstraints, currViewType);
+        return getCorrectConstraintPosition(2, mGroupViewTypePositionConstraints, currViewType);
     }
 
     public void setFooterViewTypePositionConstraints(List<Integer> footerViewTypePositionConstraints) {
@@ -1109,10 +1211,15 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public int getCorrectFooterConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(mFooterViewTypePositionConstraints, currViewType);
+        return getCorrectConstraintPosition(3, mFooterViewTypePositionConstraints, currViewType);
     }
 
-    private int getCorrectConstraintPosition(List<Integer> viewTypes, int currViewType) {
+    /**
+     * @param type         0,header;1,child;2,group,3,footer
+     * @param viewTypes    约束列表（顺序）
+     * @param currViewType 需要判断位置的viewType
+     */
+    private int getCorrectConstraintPosition(int type, List<Integer> viewTypes, int currViewType) {
         if (viewTypes == null || viewTypes.isEmpty()) {
             XLog.w("Please call method setXXXViewTypePositionConstraints");
             return -1;
@@ -1128,7 +1235,22 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         int tmp;
         int targetPos = -1;
         for (int i = currViewTypePosition - 1; i >= 0; i--) {
-            tmp = getHeaderPositionByViewType(viewTypes.get(i));
+            switch (type) {
+                case 0:
+                    tmp = getLastHeaderPositionByViewType(viewTypes.get(i));
+                    break;
+                case 1:
+                    tmp = getLastChildPositionByViewType(viewTypes.get(i));
+                    break;
+                case 2:
+                    tmp = getLastGroupPositionByViewType(viewTypes.get(i));
+                    break;
+                case 3:
+                    tmp = getLastFooterPositionByViewType(viewTypes.get(i));
+                    break;
+                default:
+                    return -1;
+            }
             if (tmp >= 0) {
                 targetPos = tmp + 1;
                 break;
