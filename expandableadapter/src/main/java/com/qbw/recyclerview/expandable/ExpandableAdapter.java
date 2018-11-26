@@ -1131,6 +1131,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             tmp = getHeaderPositionByViewType(viewTypes.get(i));
             if (tmp >= 0) {
                 targetPos = tmp + 1;
+                break;
             }
         }
         if (targetPos == -1) {
