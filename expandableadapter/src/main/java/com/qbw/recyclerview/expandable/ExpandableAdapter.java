@@ -20,6 +20,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private Map<T, List<T>> mGroupChildMap;
     private List<T> mFooterList;
 
+    private List<Integer> mHeaderViewTypePositionConstraints;
+    private List<Integer> mChildViewTypePositionConstraints;
+    private List<Integer> mGroupViewTypePositionConstraints;
+    private List<Integer> mFooterViewTypePositionConstraints;
+
     public ExpandableAdapter() {
         mList = new ArrayList<>();
         mHeaderList = new ArrayList<>();
@@ -67,10 +72,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void swapItem(int sourcePosition, int targetPosition) {
-        if(sourcePosition < 0 || sourcePosition >= getItemCount()) {
+        if (sourcePosition < 0 || sourcePosition >= getItemCount()) {
             if (XLog.isEnabled()) XLog.e("invalid sourcePosition:%d", sourcePosition);
             return;
-        } else if(targetPosition < 0 || targetPosition >= getItemCount()) {
+        } else if (targetPosition < 0 || targetPosition >= getItemCount()) {
             if (XLog.isEnabled()) XLog.e("invalid targetPosition:%d", targetPosition);
             return;
         }
@@ -86,13 +91,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (-1 != (posSource = getChildPosition(source))) {
             flagSource |= 1;
         } else if (-1 != (posSource = getFooterPosition(source))) {
-            flagSource |= 1<<1;
+            flagSource |= 1 << 1;
         } else if (-1 != (posSource = getHeaderPosition(source))) {
-            flagSource |= 1<<2;
+            flagSource |= 1 << 2;
         } else if (-1 != (possSource = getGroupChildPosition(source))[0]) {
-            flagSource |= 1<<3;
+            flagSource |= 1 << 3;
         } else if (-1 != (posSource = getGroupPosition(source))) {
-            flagSource |= 1<<4;
+            flagSource |= 1 << 4;
         } else {
             if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", sourcePosition);
         }
@@ -100,13 +105,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (-1 != (posTarget = getChildPosition(target))) {
             flagTarget |= 1;
         } else if (-1 != (posTarget = getFooterPosition(target))) {
-            flagTarget |= 1<<1;
+            flagTarget |= 1 << 1;
         } else if (-1 != (posTarget = getHeaderPosition(target))) {
-            flagTarget |= 1<<2;
+            flagTarget |= 1 << 2;
         } else if (-1 != (possTarget = getGroupChildPosition(target))[0]) {
-            flagTarget |= 1<<3;
+            flagTarget |= 1 << 3;
         } else if (-1 != (posTarget = getGroupPosition(target))) {
-            flagTarget |= 1<<4;
+            flagTarget |= 1 << 4;
         } else {
             if (XLog.isEnabled()) XLog.e("wrong adapter position[%d]", sourcePosition);
         }
@@ -1073,5 +1078,64 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         } else {
             XLog.w("no group's viewType is %d", viewType);
         }
+    }
+
+    public void setHeaderViewTypePositionConstraints(List<Integer> headerViewTypePositionConstraints) {
+        mHeaderViewTypePositionConstraints = headerViewTypePositionConstraints;
+    }
+
+    public int getCorrectHeaderConstraintPosition(int currViewType) {
+        return getCorrectConstraintPosition(mHeaderViewTypePositionConstraints, currViewType);
+    }
+
+    public void setChildViewTypePositionConstraints(List<Integer> childViewTypePositionConstraints) {
+        mChildViewTypePositionConstraints = childViewTypePositionConstraints;
+    }
+
+    public int getCorrectChildConstraintPosition(int currViewType) {
+        return getCorrectConstraintPosition(mChildViewTypePositionConstraints, currViewType);
+    }
+
+    public void setGroupViewTypePositionConstraints(List<Integer> groupViewTypePositionConstraints) {
+        mGroupViewTypePositionConstraints = groupViewTypePositionConstraints;
+    }
+
+    public int getCorrectGroupConstraintPosition(int currViewType) {
+        return getCorrectConstraintPosition(mGroupViewTypePositionConstraints, currViewType);
+    }
+
+    public void setFooterViewTypePositionConstraints(List<Integer> footerViewTypePositionConstraints) {
+        mFooterViewTypePositionConstraints = footerViewTypePositionConstraints;
+    }
+
+    public int getCorrectFooterConstraintPosition(int currViewType) {
+        return getCorrectConstraintPosition(mFooterViewTypePositionConstraints, currViewType);
+    }
+
+    private int getCorrectConstraintPosition(List<Integer> viewTypes, int currViewType) {
+        if (viewTypes == null || viewTypes.isEmpty()) {
+            XLog.w("Please call method setXXXViewTypePositionConstraints");
+            return -1;
+        }
+        int currViewTypePosition = viewTypes.indexOf(currViewType);
+        if (currViewTypePosition == -1) {
+            XLog.w("ViewType [%d] not find in XXX constraint viewType list");
+            return -1;
+        }
+        if (currViewTypePosition == 0) {
+            return 0;
+        }
+        int tmp;
+        int targetPos = -1;
+        for (int i = currViewTypePosition - 1; i >= 0; i--) {
+            tmp = getHeaderPositionByViewType(viewTypes.get(i));
+            if (tmp >= 0) {
+                targetPos = tmp + 1;
+            }
+        }
+        if (targetPos == -1) {
+            targetPos = 0;
+        }
+        return targetPos;
     }
 }

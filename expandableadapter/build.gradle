@@ -38,7 +38,7 @@ ext {
     siteUrl = 'https://github.com/qbwjly/ExpandableAdapter'
     gitUrl = 'https://github.com/qbwjly/ExpandableAdapter.git'
 
-    libraryVersion = '3.5.2'
+    libraryVersion = '3.6.0'
 
     developerId = 'qinbaowei'
     developerName = 'qinbaowei'

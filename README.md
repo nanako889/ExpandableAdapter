@@ -42,7 +42,11 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:3.5.2'
+compile 'com.qbw.recyclerview:expandableadapter:3.6.0'
+
+# V3.6.0
+
+1.增加设置header，child，group，footer的viewType显示顺序的函数，处理那些页面并发插入多条数据，但是又需要保持一定的顺序
 
 # V3.5.2
 
