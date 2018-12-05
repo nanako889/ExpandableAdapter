@@ -1,15 +1,11 @@
 package com.qbw.recyclerview.expandable;
 
-import android.support.v7.widget.RecyclerView;
-
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.base.BaseExpandableAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Bond on 2016/4/2.
@@ -549,21 +545,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
     }
 
-    public final void updateGroupChild(int groupPosition, boolean updateGroup) {
-        if (!checkGroupPosition(groupPosition)) {
-            return;
-        }
-        int adapPos = convertGroupPositionInner(groupPosition);
-        int childCount = getGroupChildCount(groupPosition);
-        if (updateGroup) {
-            notifyItemRangeChanged(adapPos, childCount + 1);
-        } else {
-            if (childCount > 0) {
-                notifyItemRangeChanged(adapPos + 1, childCount);
-            }
-        }
-    }
-
     @Override
     public final int getGroupCount() {
         return mGroupCount;
@@ -604,50 +585,69 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkGroupPosition(groupPosition)) {
             return new int[]{-1, -1};
         }
-        return addGroupChild(groupPosition, getGroupChildCount(groupPosition), childList);
+        return addGroupChild(groupPosition, mGroupChildCount.get(groupPosition), childList);
     }
 
-    public final int[] addGroupChild(int groupPosition, int childPosition, List<T> childList) {
+    public final int[] addGroupChild(int groupPosition, int groupChildPosition, List<T> childList) {
         if (!checkGroupPosition(groupPosition)) {
             return new int[]{-1, -1};
         } else if (childList == null || childList.isEmpty()) {
-            if (XLog.isEnabled()) XLog.e("invalid child mList");
+            XLog.e("Invalid group child mList");
             return new int[]{-1, -1};
-        } else if (childPosition < 0) {
-            if (XLog.isEnabled()) XLog.e("invalid child position %d", childPosition);
+        } else if (groupChildPosition < 0) {
+            XLog.e("Invalid child position %d", groupChildPosition);
             return new int[]{-1, -1};
         }
-        int oldGroupChildCount = getGroupChildCount(groupPosition);
-        if (childPosition > oldGroupChildCount) {
-            childPosition = oldGroupChildCount;
+        int oldGroupChildCount = mGroupChildCount.get(groupPosition);
+        if (groupChildPosition > oldGroupChildCount) {
+            groupChildPosition = oldGroupChildCount;
         }
-        mGroupChildMap.get(mGroupList.get(groupPosition)).addAll(childPosition, childList);
-        int adapterPosition = convertGroupChildPositionInner(groupPosition, childPosition);
-        mList.addAll(adapterPosition, childList);
-        notifyItemRangeInserted(adapterPosition, childList.size());
-        return new int[]{groupPosition, childPosition};
+        int itemPosition = convertGroupChildPosition(groupPosition, groupChildPosition);
+        mList.addAll(itemPosition, childList);
+        notifyItemRangeInserted(itemPosition, childList.size());
+        return new int[]{groupPosition, groupChildPosition};
     }
 
     public final List<T> getGroups() {
-        return new ArrayList<T>(mGroupList);
+        if (mGroupCount <= 0) {
+            return null;
+        }
+        List<T> groups = new ArrayList<>(mGroupCount);
+        for (int i = 0; i < mGroupCount; i++) {
+            groups.add(getItem(convertGroupPosition(i)));
+        }
+        return groups;
     }
 
     public final List<T> getGroupChilds(int groupPosition) {
         if (!checkGroupPosition(groupPosition)) {
             return null;
         }
-        return new ArrayList<T>(mGroupChildMap.get(mGroupList.get(groupPosition)));
-    }
-
-    public final T getGroupChild(int groupPosition, int childPosition) {
-        if (!checkGroupChildPosition(groupPosition, childPosition)) {
+        int groupChildCount = mGroupChildCount.get(groupPosition);
+        if (groupChildCount <= 0) {
             return null;
         }
-        return mGroupChildMap.get(mGroupList.get(groupPosition)).get(childPosition);
+        int itemPosition = convertGroupPosition(groupPosition);
+        List<T> groupChilds = new ArrayList<>(groupChildCount);
+        for (int i = 0; i < groupChildCount; i++) {
+            groupChilds.add(getItem(itemPosition + 1 + i));
+        }
+        return groupChilds;
     }
 
-    public final void removeGroupChild(int groupPosition, int childPosition) {
-        removeGroup(groupPosition, childPosition, 1, false);
+    public final T getGroupChild(int groupPosition, int groupChildPosition) {
+        if (!checkGroupChildPosition(groupPosition, groupChildPosition)) {
+            return null;
+        }
+        int itemPosition = convertGroupChildPosition(groupPosition, groupChildPosition);
+        if (itemPosition == -1) {
+            return null;
+        }
+        return getItem(itemPosition);
+    }
+
+    public final void removeGroupChild(int groupPosition, int groupChildPosition) {
+        removeGroupChild(groupPosition, groupChildPosition, 1);
     }
 
 
@@ -661,25 +661,20 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         int groupChildCount = getGroupChildCount(groupPosition);
         if (groupChildCount > 0) {
-            removeGroup(groupPosition,
-                        childStarPosition,
-                        groupChildCount - childStarPosition,
-                        false);
+            removeGroupChild(groupPosition, childStarPosition, groupChildCount - childStarPosition);
         }
     }
 
-    public final void updateGroupChild(int groupPosition, int childPosition, T t) {
-        if (!checkGroupChildPosition(groupPosition, childPosition)) {
+    public final void updateGroupChild(int groupPosition, int groupChildPosition, T groupChild) {
+        if (!checkGroupChildPosition(groupPosition, groupChildPosition)) {
             return;
         }
-        int adapPos = convertGroupChildPosition(groupPosition, childPosition);
-        if (XLog.isEnabled()) XLog.v("groupPosition=%d, childPosition=%d, adapGroupChildPos=%d",
-                                     groupPosition,
-                                     childPosition,
-                                     adapPos);
-        mGroupChildMap.get(mGroupList.get(groupPosition)).set(childPosition, t);
-        mList.set(adapPos, t);
-        notifyItemChanged(adapPos);
+        int itemPosition = convertGroupChildPosition(groupPosition, groupChildPosition);
+        if (itemPosition == -1) {
+            return;
+        }
+        mList.set(itemPosition, groupChild);
+        notifyItemChanged(itemPosition);
     }
 
     @Override
@@ -691,11 +686,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void notifyGroupChildChanged(int groupPosition, int childPosition) {
-        if (!checkGroupChildPosition(groupPosition, childPosition)) {
+        int itemPosition = convertGroupChildPosition(groupPosition, childPosition);
+        if (itemPosition == -1) {
             return;
         }
-        int adapPos = convertGroupChildPosition(groupPosition, childPosition);
-        notifyItemChanged(adapPos);
+        notifyItemChanged(itemPosition);
     }
 
     private boolean checkGroupChildPosition(int groupPosition, int groupChildPosition) {
@@ -716,12 +711,25 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return true;
     }
 
-    public final int[] getGroupChildPosition(int adapterPosition) {
-        if (!checkItemPosition(adapterPosition)) {
-            if (XLog.isEnabled()) XLog.e("invalid adapter position %d", adapterPosition);
-            return new int[]{-1, -1};
+    public final int[] getGroupChildPosition(int itemPosition) {
+        int[] groupChildPosition = new int[]{-1, -1};
+        if (!checkItemPosition(itemPosition)) {
+            XLog.e("Invalid item position %d", itemPosition);
+            return groupChildPosition;
         }
-        return getGroupChildPosition(getItem(adapterPosition));
+
+        int groupItemPosition;
+        for (int i = 0; i < mGroupCount; i++) {
+            groupItemPosition = convertGroupPosition(i);
+            for (int j = 0; j < mGroupChildCount.get(i); j++) {
+                if (groupItemPosition + 1 + j == itemPosition) {
+                    groupChildPosition[0] = i;
+                    groupChildPosition[1] = j;
+                    break;
+                }
+            }
+        }
+        return groupChildPosition;
     }
 
     public final int[] getGroupChildPosition(T groupChild) {
