@@ -457,10 +457,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             XLog.w("Reset group position from %d to %d", groupPosition, mGroupCount);
             groupPosition = mGroupCount;
         }
-        int itemPosition = mHeaderCount + mChildCount;
+        int itemPosition = 0;
         for (int i = 0; i < groupPosition; i++) {
-            itemPosition += mGroupChildCount.get(i);
+            itemPosition += mGroupChildCount.get(i) + 1;
         }
+        itemPosition += mHeaderCount + mChildCount;
         mList.add(itemPosition, group);
         notifyItemInserted(itemPosition);
         mGroupCount += 1;
@@ -627,7 +628,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (groupChildPosition > oldGroupChildCount) {
             groupChildPosition = oldGroupChildCount;
         }
-        int itemPosition = convertGroupPosition(groupPosition) + 1 + groupChildPosition;
+        int itemPosition = 0;
+        for (int i = 0; i < groupPosition; i++) {
+            itemPosition += mGroupChildCount.get(i) + 1;
+        }
+        itemPosition += mHeaderCount + mChildCount + 1 + groupChildPosition;
         int addSize;
         if (groupChild != null) {
             mList.add(itemPosition, groupChild);

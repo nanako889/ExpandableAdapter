@@ -114,10 +114,10 @@ public class MainActivity extends Activity {
             mAdapter.addHeader(new Header("header " + i));
         }*/
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 2; i++) {
             int groupPos = mAdapter.addGroup(new Group("group " + i));
             for (int j = 0; j < 5; j++) {
-                mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + j));
+                mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + i + "," + j));
             }
         }
     }
