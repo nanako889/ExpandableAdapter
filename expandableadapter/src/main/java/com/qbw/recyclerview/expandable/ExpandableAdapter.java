@@ -168,16 +168,18 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkHeaderPosition(headerBeginPosition)) {
             return;
         } else if (removeCount <= 0) {
-            XLog.w("Invalid header removeCount %d", removeCount);
+            XLog.e("Invalid header removeCount %d", removeCount);
             return;
         }
         int itemBeginPosition = headerBeginPosition;
-        if (headerBeginPosition + removeCount > mHeaderCount) {
+        int itemEndPosition = headerBeginPosition + removeCount;
+        if (itemEndPosition > mHeaderCount) {
+            itemEndPosition = mHeaderCount;
             int oldRemoveCount = removeCount;
-            removeCount = mHeaderCount - headerBeginPosition;
+            removeCount = itemEndPosition - itemBeginPosition;
             XLog.i("Reset removeCount from %d to %d", oldRemoveCount, removeCount);
         }
-        mList.subList(itemBeginPosition, itemBeginPosition + removeCount).clear();
+        mList.subList(itemBeginPosition, itemEndPosition).clear();
         notifyItemRangeRemoved(itemBeginPosition, removeCount);
         mHeaderCount -= removeCount;
     }
@@ -290,23 +292,19 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return childPosition;
     }
 
-    public final List<T> getChilds() {
-        if (mChildCount <= 0 || getItemCount() <= 0) {
-            XLog.w("No child items");
-            return null;
-        }
-        return new ArrayList<>(mList.subList(mHeaderCount, mHeaderCount + mChildCount));
-    }
-
-    public final T getChild(int childPosition) {
-        if (!checkChildPosition(childPosition)) {
-            return null;
-        }
-        return mList.get(mHeaderCount + childPosition);
-    }
-
     public final void removeChild(int childPos) {
         removeChild(childPos, 1);
+    }
+
+    public final void removeChild(T child) {
+        removeChild(getChildPosition(child), 1);
+    }
+
+    public final void removeChilds(List<T> childs) {
+        int size = childs != null ? childs.size() : 0;
+        for (int i = 0; i < size; i++) {
+            removeChild(getChildPosition(childs.get(i)), 1);
+        }
     }
 
     public final void removeChild(int childBeginPosition, int removeCount) {
@@ -336,6 +334,22 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         removeChild(0, mChildCount);
     }
 
+    public final List<T> getChilds() {
+        if (mChildCount <= 0 || getItemCount() <= 0) {
+            XLog.w("No child items");
+            return null;
+        }
+        return new ArrayList<>(mList.subList(mHeaderCount, mHeaderCount + mChildCount));
+    }
+
+    public final T getChild(int childPosition) {
+        if (!checkChildPosition(childPosition)) {
+            return null;
+        }
+        return mList.get(mHeaderCount + childPosition);
+    }
+
+
     public final void updateChild(int childPosition, T t) {
         if (!checkChildPosition(childPosition)) {
             return;
@@ -345,16 +359,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         notifyItemChanged(itemPosition);
     }
 
-    public final void removeChild(T child) {
-        removeChild(getChildPosition(child), 1);
-    }
-
-    public final void removeChilds(List<T> childs) {
-        int size = childs != null ? childs.size() : 0;
-        for (int i = 0; i < size; i++) {
-            removeChild(getChildPosition(childs.get(i)), 1);
-        }
-    }
 
     public final void notifyChildChanged(int childPosition) {
         if (!checkChildPosition(childPosition)) {
