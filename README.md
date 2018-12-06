@@ -42,9 +42,9 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:4.0'
+compile 'com.qbw.recyclerview:expandableadapter:3.6.2'
 
-# V4.0
+# V4.0(testing)
 
 1.重写分组逻辑，删除了里面的headerList,childList,groupList,footerList
 

@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
                     outRect.right = 150;
                 } else if (Adapter.Type.GROUP_CHILD == mAdapter.getItemViewType(adapPos)) {
                     int[] gcp = mAdapter.getGroupChildPosition(adapPos);
+                    XLog.d("pos:"+gcp.toString());
                     if (gcp[1] % 2 == 0) {
                         outRect.left = 150;
                     }
