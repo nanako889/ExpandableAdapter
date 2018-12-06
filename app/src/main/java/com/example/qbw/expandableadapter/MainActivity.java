@@ -65,8 +65,8 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        InnerItemTouchHelper touchHelper = new InnerItemTouchHelper(new InnerItemTouchCallback());
-        touchHelper.attachToRecyclerView(mRecyclerView);
+        //InnerItemTouchHelper touchHelper = new InnerItemTouchHelper(new InnerItemTouchCallback());
+        //touchHelper.attachToRecyclerView(mRecyclerView);
 
         mStickyLayout.init(false);
 
@@ -92,9 +92,8 @@ public class MainActivity extends Activity {
             }
 
         });
+
         test();
-        test1();
-        test2();
     }
 
     private void initView() {
@@ -103,115 +102,37 @@ public class MainActivity extends Activity {
         mStickyLayout = (StickyLayout) findViewById(R.id.stickylayout);
     }
 
-    private void test2() {
-        mAdapter.addGroup(new Group("g1"));
-        mAdapter.addGroupChild(0, new GroupChild("gc"));
-        mAdapter.addGroup(new Group("g2"));
-        mAdapter.addGroupChild(1, new GroupChild("gc"));
-        mAdapter.addGroup(new Group("g3"));
-        mAdapter.addGroupChild(2, new GroupChild("gc"));
-        mAdapter.addGroup(new Group("g4"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.addGroupChild(3, new GroupChild("gc"));
-        mAdapter.updateGroup(0, new Group("g1 update"));
-        XLog.d("group child count:%d, %s",
-               mAdapter.getGroupChildCount(0),
-               mAdapter.getGroupChild(0, 0).text);
-    }
-
-    private void test1() {
-        for (int i = 0; i < 100; i++) {
-            mAdapter.addGroup(new Group("group" + i));
-            for (int j = 0; j < 100; j++) {
-                mAdapter.addGroupChild(i, new GroupChild("groupchild" + j));
-            }
-        }
-    }
-
     private void test() {
-        mAdapter.addGroup(new Group("group0"));
-        mAdapter.addGroupChild(0, new GroupChild("groupchild"));
-        mAdapter.addGroup(new Group("group1"));
-        for (int i = 0; i < 20; i++) {
-            mAdapter.addGroupChild(1, new GroupChild("groupchild" + i));
+        for (int i = 0; i < 5; i++) {
+            mAdapter.addHeader(new Header("header " + i));
         }
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.addGroup(1, new Group1("group insert"));
-            }
-        }, 3000);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.addGroupChild(0, new GroupChild("groupchild1"));
-
-            }
-        }, 5000);
-
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter.addGroup(0, new Group("group insert 2"));
-                mAdapter.addGroupChild(0, new GroupChild("groupchild1"));
-                mAdapter.addGroupChild(0, new GroupChild("groupchild2"));
-                mAdapter.addGroupChild(0, new GroupChild("groupchild3"));
-            }
-        }, 8000);
-
-        for (int i = 0; i < 10; i++) {
-            mAdapter.addFooter(new Footer("footer" + i));
+        for (int i = 0; i < 5; i++) {
+            mAdapter.addChild(new Child("child " + i));
         }
 
-        for (int i = 0; i < 4; i++) {
-            mAdapter.addHeader(new Header("header" + i));
-        }
+        /*for (int i = 6; i < 10; i++) {
+            mAdapter.addHeader(new Header("header " + i));
+        }*/
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < 5; i++) {
-                    mAdapter.addChild(new Child("child" + i));
-
-
-                }
-                List<Child> groupChildren = new ArrayList<Child>();
-                groupChildren.add(new Child("child-3"));
-                groupChildren.add(new Child("child-3"));
-                groupChildren.add(new Child("child-3"));
-                mAdapter.addChild(3,
-                                  Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
-
-                groupChildren = new ArrayList<Child>();
-                groupChildren.add(new Child("child-0"));
-                groupChildren.add(new Child("child-0"));
-                groupChildren.add(new Child("child-0"));
-                mAdapter.addChild(0,
-                                  Arrays.asList(groupChildren.toArray(new BaseEntity[groupChildren.size()])));
-                mAdapter.addChild(-1, new Child("err"));
-                mAdapter.addChild(100, new Child("end"));
+        for (int i = 0; i < 5; i++) {
+            int groupPos = mAdapter.addGroup(new Group("group " + i));
+            for (int j = 0; j < 5; j++) {
+                mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + j));
             }
-        }, 10000);
+        }
     }
 
-    private class InnerItemTouchHelper extends ItemTouchHelper {
+    /*private class InnerItemTouchHelper extends ItemTouchHelper {
 
-        /**
-         * Creates an ItemTouchHelper that will work with the given Callback.
-         * <p>
-         * You can attach ItemTouchHelper to a RecyclerView via
-         * {@link #attachToRecyclerView(RecyclerView)}. Upon attaching, it will add an item decoration,
-         * an onItemTouchListener and a Child attach / detach listener to the RecyclerView.
-         *
-         * @param callback The Callback which controls the behavior of this touch helper.
-         */
+     *//**
+     * Creates an ItemTouchHelper that will work with the given Callback.
+     * <p>
+     * You can attach ItemTouchHelper to a RecyclerView via
+     * {@link #attachToRecyclerView(RecyclerView)}. Upon attaching, it will add an item decoration,
+     * an onItemTouchListener and a Child attach / detach listener to the RecyclerView.
+     *
+     * @param callback The Callback which controls the behavior of this touch helper.
+     *//*
         public InnerItemTouchHelper(Callback callback) {
             super(callback);
         }
@@ -237,5 +158,5 @@ public class MainActivity extends Activity {
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
         }
-    }
+    }*/
 }

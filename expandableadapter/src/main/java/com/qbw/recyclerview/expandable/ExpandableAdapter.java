@@ -449,7 +449,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (groupPosition < 0) {
             XLog.e("Invalid group position %d", groupPosition);
             return -1;
-        } else if (mList.indexOf(group) != -1) {
+        } else if (indexOfGroup(group) != -1) {
             XLog.e("Group is alread exist! You must use a different object to create a new group");
             return -1;
         }
@@ -457,7 +457,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             XLog.w("Reset group position from %d to %d", groupPosition, mGroupCount);
             groupPosition = mGroupCount;
         }
-        int itemPosition = 0;
+        int itemPosition = mHeaderCount + mChildCount;
         for (int i = 0; i < groupPosition; i++) {
             itemPosition += mGroupChildCount.get(i);
         }
@@ -467,9 +467,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (mGroupChildCount == null) {
             mGroupChildCount = new ArrayList<>();
         }
-        if (groupPosition >= mGroupChildCount.size()) {
-            mGroupChildCount.add(groupPosition, 0);
-        }
+        mGroupChildCount.add(groupPosition, 0);
         return groupPosition;
     }
 
@@ -598,7 +596,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkGroupPosition(groupPosition)) {
             return new int[]{-1, -1};
         }
-        return addGroupChild(groupPosition, getGroupChildCount(groupPosition), groupChild, null);
+        return addGroupChild(groupPosition, mGroupChildCount.get(groupPosition), groupChild, null);
     }
 
     public final int[] addGroupChild(int groupPosition, int groupChildPosition, T groupChild) {
@@ -785,15 +783,19 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             XLog.e("Invalid item position %d", itemPosition);
             return groupChildPosition;
         }
-        int groupItemPosition;
-        for (int i = 0; i < mGroupCount; i++) {
-            groupItemPosition = convertGroupPosition(i);
-            for (int j = 0; j < mGroupChildCount.get(i); j++) {
-                if (groupItemPosition + 1 + j == itemPosition) {
-                    groupChildPosition[0] = i;
-                    groupChildPosition[1] = j;
-                    break;
+        if (mGroupCount > 0) {
+            int groupItemPosition = mHeaderCount + mChildCount;
+            for (int i = 0; i < mGroupCount; i++) {
+                groupItemPosition++;
+                for (int j = 0; j < mGroupChildCount.get(i); j++) {
+                    groupItemPosition += j;
+                    if (groupItemPosition == itemPosition) {
+                        groupChildPosition[0] = i;
+                        groupChildPosition[1] = j;
+                        break;
+                    }
                 }
+                groupItemPosition++;
             }
         }
         return groupChildPosition;
@@ -828,70 +830,56 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void addFooter(T footer) {
-        List<T> ts = new ArrayList<>();
-        ts.add(footer);
-        addFooter(getFooterCount(), ts);
+        addFooter(mFooterCount, footer, null);
     }
 
     public final void addFooter(List<T> footerList) {
-        addFooter(getFooterCount(), footerList);
+        addFooter(mFooterCount, null, footerList);
     }
 
-    public final void addFooter(int position, T footer) {
-        List<T> ts = new ArrayList<>();
-        ts.add(footer);
-        addFooter(position, ts);
+    public final void addFooter(int footerPosition, T footer) {
+        addFooter(footerPosition, footer, null);
     }
 
-    public final int addFooter(int footerPosition, List<T> footerList) {
-        if (null == footerList || footerList.isEmpty()) {
-            XLog.e("Wrong footer param");
-            return -1;
-        } else if (footerPosition < 0) {
+    public final int addFooter(int footerPosition, T footer, List<T> footerList) {
+        if (footerPosition < 0) {
             XLog.e("Invalid footer position %d", footerPosition);
             return -1;
+        } else if (footer == null && (null == footerList || footerList.isEmpty())) {
+            XLog.e("Wrong footer param");
+            return -1;
         }
-        int oldFooterCount = getFooterCount();
+        int oldFooterCount = mFooterCount;
         if (footerPosition > oldFooterCount) {
             footerPosition = oldFooterCount;
         }
-        int itemPosition = convertFooterPosition(footerPosition, false);
-        mList.addAll(itemPosition, footerList);
-        int addSize = footerList.size();
+        int group_groupChildCount = mGroupCount;
+        for (int i = 0; i < mGroupCount; i++) {
+            group_groupChildCount += mGroupChildCount.get(i);
+        }
+        int itemPosition = mHeaderCount + mChildCount + group_groupChildCount + footerPosition;
+        int addSize;
+        if (footer != null) {
+            mList.add(itemPosition, footer);
+            addSize = 1;
+        } else {
+            mList.addAll(itemPosition, footerList);
+            addSize = footerList.size();
+        }
         XLog.v("Notify item from %d, count is %d", itemPosition, addSize);
         notifyItemRangeInserted(itemPosition, addSize);
         mFooterCount += addSize;
         return footerPosition;
     }
 
-    public final List<T> getFooters() {
-        int footerItemBeginPosition = convertFooterPosition(0);
-        if (footerItemBeginPosition == -1) {
-            return null;
-        }
-        return new ArrayList<>(mList.subList(footerItemBeginPosition, mFooterCount));
-    }
-
-
-    public final T getFooter(int footerPosition) {
-        if (!checkFooterPosition(footerPosition)) {
-            return null;
-        }
-        return mList.get(convertFooterPosition(footerPosition));
-    }
-
-    public final void updateFooter(int footerPosition, T t) {
-        if (!checkFooterPosition(footerPosition)) {
+    public final void removeFooter(T footer) {
+        int itemPosition = indexOfFooter(footer);
+        if (itemPosition == -1) {
             return;
         }
-        int itemPosition = convertFooterPosition(footerPosition);
-        mList.set(itemPosition, t);
-        notifyItemChanged(itemPosition);
-    }
-
-
-    public final void removeFooter(T footer) {
-        removeFooter(getFooterPosition(footer));
+        mList.remove(itemPosition);
+        notifyItemRemoved(itemPosition);
+        mFooterCount--;
     }
 
     public final void removeFooters(List<T> footers) {
@@ -909,23 +897,52 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         clearFooter(0);
     }
 
-    public final void clearFooter(int beginPosition) {
-        removeFooter(beginPosition, getFooterCount() - beginPosition);
+    public final void clearFooter(int footerBeginPosition) {
+        removeFooter(footerBeginPosition, mFooterCount - footerBeginPosition);
     }
 
     public final void removeFooter(int footerBeginPosition, int removeCount) {
         if (!checkFooterPosition(footerBeginPosition)) {
             return;
         }
-        int footerCount = getFooterCount();
         int footerItemBeginPosition = convertFooterPosition(footerBeginPosition);
-        if (footerBeginPosition + removeCount > footerCount) {
+        int footerItemEndPosition = footerItemBeginPosition + removeCount;
+        if (footerItemEndPosition > mList.size()) {
+            footerItemEndPosition = mList.size();
             int oldRemoveCount = removeCount;
-            removeCount = footerCount - footerBeginPosition;
+            removeCount = footerItemEndPosition - footerItemBeginPosition;
             XLog.i("Reset removeCount from %d to %d", oldRemoveCount, removeCount);
         }
-        mList.subList(footerItemBeginPosition, footerItemBeginPosition + removeCount).clear();
+        mList.subList(footerItemBeginPosition, footerItemEndPosition).clear();
         notifyItemRangeRemoved(footerItemBeginPosition, removeCount);
+        mFooterCount -= removeCount;
+    }
+
+    public final List<T> getFooters() {
+        int footerItemBeginPosition = convertFooterPosition(0);
+        if (footerItemBeginPosition == -1) {
+            return null;
+        }
+        return new ArrayList<>(mList.subList(footerItemBeginPosition,
+                                             footerItemBeginPosition + mFooterCount));
+    }
+
+
+    public final T getFooter(int footerPosition) {
+        int itemPosition = convertFooterPosition(footerPosition);
+        if (itemPosition == -1) {
+            return null;
+        }
+        return mList.get(itemPosition);
+    }
+
+    public final void updateFooter(int footerPosition, T footer) {
+        int itemPosition = convertFooterPosition(footerPosition);
+        if (itemPosition == -1) {
+            return;
+        }
+        mList.set(itemPosition, footer);
+        notifyItemChanged(itemPosition);
     }
 
     @Override
@@ -948,8 +965,12 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkItemPosition(itemPosition)) {
             XLog.e("Invalid item position %d", itemPosition);
             return -1;
+        } else if (mFooterCount <= 0) {
+            return -1;
+        } else if (itemPosition < mList.size() - mFooterCount) {
+            return -1;
         }
-        return getFooterPosition(getItem(itemPosition));
+        return mFooterCount - (mList.size() - itemPosition);
     }
 
     public final int getFooterPosition(T footer) {
@@ -973,11 +994,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final int convertFooterPosition(int footerPosition) {
-        return convertFooterPosition(footerPosition, true);
-    }
-
-    private final int convertFooterPosition(int footerPosition, boolean check) {
-        if (check && !checkFooterPosition(footerPosition)) {
+        if (!checkFooterPosition(footerPosition)) {
             return -1;
         }
         int group_groupChildCount = mGroupCount;
