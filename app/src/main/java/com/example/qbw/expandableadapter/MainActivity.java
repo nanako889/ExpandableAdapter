@@ -110,16 +110,42 @@ public class MainActivity extends Activity {
             mAdapter.addChild(new Child("child " + i));
         }
 
-        /*for (int i = 6; i < 10; i++) {
-            mAdapter.addHeader(new Header("header " + i));
-        }*/
-
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 5; i++) {
             int groupPos = mAdapter.addGroup(new Group("group " + i));
             for (int j = 0; j < 5; j++) {
                 mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + i + "," + j));
             }
         }
+
+        for (int i = 0; i < 5; i++) {
+            mAdapter.addFooter(new Footer("footer " + i));
+        }
+
+        mAdapter.addHeader(0, new Header("random header 0"));
+        mAdapter.addHeader(2, new Header("random header 2"));
+        mAdapter.addHeader(mAdapter.getHeaderCount(), new Header("random header last"));
+
+        mAdapter.addChild(0, new Child("random child 0"));
+        mAdapter.addChild(2, new Child("random child 2"));
+        mAdapter.addChild(mAdapter.getChildCount(), new Child("random child last"));
+
+        int gp;
+        gp = mAdapter.addGroup(0, new Group("random group 0"));
+        for (int i = 0; i < 2; i++) {
+            mAdapter.addGroupChild(gp, new GroupChild("random group 0, " + i));
+        }
+        gp = mAdapter.addGroup(3, new Group("random group 3"));
+        for (int i = 0; i < 10; i++) {
+            mAdapter.addGroupChild(gp, new GroupChild("random group 3, " + i));
+        }
+        gp = mAdapter.addGroup(mAdapter.getGroupCount(), new Group("random group last"));
+        for (int i = 0; i < 5; i++) {
+            mAdapter.addGroupChild(gp, new GroupChild("random group last, " + i));
+        }
+
+        mAdapter.addFooter(0, new Footer("random footer 0"));
+        mAdapter.addFooter(1, new Footer("random footer 1"));
+        mAdapter.addFooter(new Footer("random footer last"));
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
