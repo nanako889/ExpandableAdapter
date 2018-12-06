@@ -489,7 +489,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
     }
 
-    private final void removeGroup(int groupPosition) {
+    public final void removeGroup(int groupPosition) {
         int itemPosition = convertGroupPosition(groupPosition);
         if (itemPosition == -1) {
             return;
@@ -1025,11 +1025,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getHeaderPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int hsize = getHeaderCount();
-        for (i = 0; i < hsize; i++) {
-            if (viewType == getItemViewType(getHeader(i)) || viewType == getItemViewType(
-                    getItemPosition(getHeader(i)))) {
+        T header;
+        for (int i = 0; i < mHeaderCount; i++) {
+            header = getHeader(i);
+            if (viewType == getItemViewType(header) || viewType == getItemViewType(getItemPosition(
+                    header))) {
                 p = i;
                 break;
             }
@@ -1039,11 +1039,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getLastHeaderPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int hsize = getHeaderCount();
-        for (i = hsize - 1; i >= 0; i--) {
-            if (viewType == getItemViewType(getHeader(i)) || viewType == getItemViewType(
-                    getItemPosition(getHeader(i)))) {
+        T header;
+        for (int i = mHeaderCount - 1; i >= 0; i--) {
+            header = getHeader(i);
+            if (viewType == getItemViewType(header) || viewType == getItemViewType(getItemPosition(
+                    header))) {
                 p = i;
                 break;
             }
@@ -1056,17 +1056,17 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (p != -1) {
             removeHeader(p);
         } else {
-            XLog.w("no header's viewType is %d", viewType);
+            XLog.w("No header's viewType is %d", viewType);
         }
     }
 
     public final int getChildPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int csize = getChildCount();
-        for (i = 0; i < csize; i++) {
-            if (viewType == getItemViewType(getChild(i)) || viewType == getItemViewType(
-                    getItemPosition(getChild(i)))) {
+        T child;
+        for (int i = 0; i < mChildCount; i++) {
+            child = getChild(i);
+            if (viewType == getItemViewType(child) || viewType == getItemViewType(getItemPosition(
+                    child))) {
                 p = i;
                 break;
             }
@@ -1076,11 +1076,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getLastChildPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int csize = getChildCount();
-        for (i = csize - 1; i >= 0; i--) {
-            if (viewType == getItemViewType(getChild(i)) || viewType == getItemViewType(
-                    getItemPosition(getChild(i)))) {
+        T child;
+        for (int i = mChildCount - 1; i >= 0; i--) {
+            child = getChild(i);
+            if (viewType == getItemViewType(child) || viewType == getItemViewType(getItemPosition(
+                    child))) {
                 p = i;
                 break;
             }
@@ -1093,17 +1093,17 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (p != -1) {
             removeChild(p);
         } else {
-            XLog.w("no child's viewType is %d", viewType);
+            XLog.w("No child's viewType is %d", viewType);
         }
     }
 
     public final int getGroupPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int gsize = getGroupCount();
-        for (i = 0; i < gsize; i++) {
-            if (viewType == getItemViewType(getGroup(i)) || viewType == getItemViewType(
-                    getItemPosition(getGroup(i)))) {
+        T group;
+        for (int i = 0; i < mGroupCount; i++) {
+            group = getGroup(i);
+            if (viewType == getItemViewType(group) || viewType == getItemViewType(getItemPosition(
+                    group))) {
                 p = i;
                 break;
             }
@@ -1113,11 +1113,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getLastGroupPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int gsize = getGroupCount();
-        for (i = gsize - 1; i >= 0; i--) {
-            if (viewType == getItemViewType(getGroup(i)) || viewType == getItemViewType(
-                    getItemPosition(getGroup(i)))) {
+        T group;
+        for (int i = mGroupCount - 1; i >= 0; i--) {
+            group = getGroup(i);
+            if (viewType == getItemViewType(group) || viewType == getItemViewType(getItemPosition(
+                    group))) {
                 p = i;
                 break;
             }
@@ -1136,11 +1136,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getFooterPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int fsize = getFooterCount();
-        for (i = 0; i < fsize; i++) {
-            if (viewType == getItemViewType(getFooter(i)) || viewType == getItemViewType(
-                    getItemPosition(getFooter(i)))) {
+        T footer;
+        for (int i = 0; i < mFooterCount; i++) {
+            footer = getFooter(i);
+            if (viewType == getItemViewType(footer) || viewType == getItemViewType(getItemPosition(
+                    footer))) {
                 p = i;
                 break;
             }
@@ -1150,11 +1150,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getLastFooterPositionByViewType(int viewType) {
         int p = -1;
-        int i;
-        int fsize = getFooterCount();
-        for (i = fsize - 1; i >= 0; i--) {
-            if (viewType == getItemViewType(getFooter(i)) || viewType == getItemViewType(
-                    getItemPosition(getFooter(i)))) {
+        T footer;
+        for (int i = mFooterCount - 1; i >= 0; i--) {
+            footer = getFooter(i);
+            if (viewType == getItemViewType(footer) || viewType == getItemViewType(getItemPosition(
+                    footer))) {
                 p = i;
                 break;
             }

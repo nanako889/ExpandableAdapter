@@ -22,6 +22,7 @@ import com.example.qbw.expandableadapter.entity.Header;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.StickyLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,9 +60,17 @@ public class MainActivity extends Activity {
                                        RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 int adapPos = parent.getChildAdapterPosition(view);
+                if(RecyclerView.NO_POSITION==adapPos) {
+                    return;
+                }
                 if (Adapter.Type.GROUP1 == mAdapter.getItemViewType(adapPos)) {
                     outRect.left = 50;
                     outRect.right = 150;
+                } else if (Adapter.Type.GROUP_CHILD == mAdapter.getItemViewType(adapPos)) {
+                    int[] gcp = mAdapter.getGroupChildPosition(adapPos);
+                    if (gcp[1] % 2 == 0) {
+                        outRect.left = 150;
+                    }
                 }
             }
         });
@@ -103,21 +112,22 @@ public class MainActivity extends Activity {
     }
 
     private void test() {
-        for (int i = 0; i < 5; i++) {
+        XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
+        for (int i = 0; i < 500; i++) {
             mAdapter.addHeader(new Header("header " + i));
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 500; i++) {
             mAdapter.addChild(new Child("child " + i));
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 500; i++) {
             int groupPos = mAdapter.addGroup(new Group("group " + i));
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 500; j++) {
                 mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + i + "," + j));
             }
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 500; i++) {
             mAdapter.addFooter(new Footer("footer " + i));
         }
 
@@ -146,6 +156,32 @@ public class MainActivity extends Activity {
         mAdapter.addFooter(0, new Footer("random footer 0"));
         mAdapter.addFooter(1, new Footer("random footer 1"));
         mAdapter.addFooter(new Footer("random footer last"));
+        XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.clearChild(5);
+            }
+        }, 300);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.removeFooter(5, mAdapter.getFooterCount() - 6);
+            }
+        }, 320);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.clearHeader(5);
+            }
+        }, 310);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.removeAllGroup();
+            }
+        }, 250);
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
