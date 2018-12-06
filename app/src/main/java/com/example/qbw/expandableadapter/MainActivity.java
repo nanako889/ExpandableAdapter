@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
                                        RecyclerView.State state) {
                 super.getItemOffsets(outRect, view, parent, state);
                 int adapPos = parent.getChildAdapterPosition(view);
-                if(RecyclerView.NO_POSITION==adapPos) {
+                if (RecyclerView.NO_POSITION == adapPos) {
                     return;
                 }
                 if (Adapter.Type.GROUP1 == mAdapter.getItemViewType(adapPos)) {
@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
                     outRect.right = 150;
                 } else if (Adapter.Type.GROUP_CHILD == mAdapter.getItemViewType(adapPos)) {
                     int[] gcp = mAdapter.getGroupChildPosition(adapPos);
-                    XLog.d("pos:"+gcp.toString());
+                    XLog.d("pos:" + Arrays.toString(gcp));
                     if (gcp[1] % 2 == 0) {
                         outRect.left = 150;
                     }
@@ -114,21 +114,21 @@ public class MainActivity extends Activity {
 
     private void test() {
         XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5; i++) {
             mAdapter.addHeader(new Header("header " + i));
         }
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5; i++) {
             mAdapter.addChild(new Child("child " + i));
         }
 
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5; i++) {
             int groupPos = mAdapter.addGroup(new Group("group " + i));
             for (int j = 0; j < 500; j++) {
                 mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + i + "," + j));
             }
         }
 
-        for (int i = 0; i < 500; i++) {
+        for (int i = 0; i < 5; i++) {
             mAdapter.addFooter(new Footer("footer " + i));
         }
 
@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
         mAdapter.addFooter(new Footer("random footer last"));
         XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
 
-        mHandler.postDelayed(new Runnable() {
+        /*mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mAdapter.clearChild(5);
@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
             public void run() {
                 mAdapter.removeAllGroup();
             }
-        }, 250);
+        }, 250);*/
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
