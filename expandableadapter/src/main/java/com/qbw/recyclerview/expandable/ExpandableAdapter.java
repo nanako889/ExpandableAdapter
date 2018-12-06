@@ -404,8 +404,10 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkItemPosition(itemPosition)) {
             XLog.e("invalid adapterPosition %d", itemPosition);
             return -1;
+        } else if (mChildCount <= 0 || itemPosition >= mHeaderCount + mChildCount) {
+            return -1;
         }
-        return getChildPosition(getItem(itemPosition));
+        return itemPosition - mHeaderCount;
     }
 
     public final int getChildPosition(T child) {
@@ -439,8 +441,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return itemPosition;
     }
 
-    public final int addGroup(T t) {
-        return addGroup(getGroupCount(), t);
+    public final int addGroup(T group) {
+        return addGroup(mGroupCount, group);
     }
 
     public final int addGroup(int groupPosition, T group) {
@@ -448,7 +450,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             XLog.e("Invalid group position %d", groupPosition);
             return -1;
         } else if (mList.indexOf(group) != -1) {
-            XLog.e("Group t is alread exist! You must use a different t to create a new group");
+            XLog.e("Group is alread exist! You must use a different object to create a new group");
             return -1;
         }
         if (groupPosition > mGroupCount) {
@@ -481,17 +483,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         for (int i = 0; i < size; i++) {
             removeGroup(groups.get(i));
         }
-    }
-
-    public final T getGroup(int groupPosition) {
-        if (!checkGroupPosition(groupPosition)) {
-            return null;
-        }
-        int itemPosition = 0;
-        for (int i = 0; i < groupPosition; i++) {
-            itemPosition += mGroupChildCount.get(i);
-        }
-        return mList.get(mHeaderCount + mChildCount + itemPosition);
     }
 
     public final void removeAllGroup() {
@@ -541,6 +532,18 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         notifyItemRangeRemoved(itemBeginPosition, removeCount);
         mGroupChildCount.set(groupPosition, groupChildCount - removeCount);
     }
+
+    public final T getGroup(int groupPosition) {
+        if (!checkGroupPosition(groupPosition)) {
+            return null;
+        }
+        int itemPosition = 0;
+        for (int i = 0; i < groupPosition; i++) {
+            itemPosition += mGroupChildCount.get(i);
+        }
+        return mList.get(mHeaderCount + mChildCount + itemPosition);
+    }
+
 
     public final void updateGroup(int groupPosition, T group) {
         int itemPosition = convertGroupPosition(groupPosition);
