@@ -502,6 +502,17 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         mGroupChildCount.remove(groupPosition);
     }
 
+    public final List<T> getGroups() {
+        if (mGroupCount <= 0) {
+            return null;
+        }
+        List<T> groups = new ArrayList<>(mGroupCount);
+        for (int i = 0; i < mGroupCount; i++) {
+            groups.add(mList.get(convertGroupPosition(i)));
+        }
+        return groups;
+    }
+
 
     public final T getGroup(int groupPosition) {
         int itemPosition = convertGroupPosition(groupPosition);
@@ -521,7 +532,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final int getGroupPosition(int itemPosition) {
-        if (!checkItemPosition(itemPosition)) {
+        if (!checkItemPosition(itemPosition) || itemPosition < mHeaderCount + mChildCount) {
             XLog.e("Invalid itemPosition %d", itemPosition);
             return -1;
         }
@@ -587,28 +598,27 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (!checkGroupPosition(groupPosition)) {
             return new int[]{-1, -1};
         }
-        ArrayList<T> ts = new ArrayList<>();
-        ts.add(groupChild);
-        return addGroupChild(groupPosition, getGroupChildCount(groupPosition), ts);
+        return addGroupChild(groupPosition, getGroupChildCount(groupPosition), groupChild, null);
     }
 
-    public final int[] addGroupChild(int groupPosition, int childPosition, T t) {
-        ArrayList<T> ts = new ArrayList<>();
-        ts.add(t);
-        return addGroupChild(groupPosition, childPosition, ts);
+    public final int[] addGroupChild(int groupPosition, int groupChildPosition, T groupChild) {
+        return addGroupChild(groupPosition, groupChildPosition, groupChild, null);
     }
 
     public final int[] addGroupChild(int groupPosition, List<T> childList) {
         if (!checkGroupPosition(groupPosition)) {
             return new int[]{-1, -1};
         }
-        return addGroupChild(groupPosition, mGroupChildCount.get(groupPosition), childList);
+        return addGroupChild(groupPosition, mGroupChildCount.get(groupPosition), null, childList);
     }
 
-    public final int[] addGroupChild(int groupPosition, int groupChildPosition, List<T> childList) {
+    public final int[] addGroupChild(int groupPosition,
+                                     int groupChildPosition,
+                                     T groupChild,
+                                     List<T> groupChildList) {
         if (!checkGroupPosition(groupPosition)) {
             return new int[]{-1, -1};
-        } else if (childList == null || childList.isEmpty()) {
+        } else if (groupChild == null && (groupChildList == null || groupChildList.isEmpty())) {
             XLog.e("Invalid group child mList");
             return new int[]{-1, -1};
         } else if (groupChildPosition < 0) {
@@ -620,10 +630,34 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             groupChildPosition = oldGroupChildCount;
         }
         int itemPosition = convertGroupPosition(groupPosition) + 1 + groupChildPosition;
-        mList.addAll(itemPosition, childList);
-        notifyItemRangeInserted(itemPosition, childList.size());
-        mGroupChildCount.set(groupPosition, oldGroupChildCount + childList.size());
+        int addSize;
+        if (groupChild != null) {
+            mList.add(itemPosition, groupChild);
+            addSize = 1;
+        } else {
+            mList.addAll(itemPosition, groupChildList);
+            addSize = groupChildList.size();
+        }
+        notifyItemRangeInserted(itemPosition, addSize);
+        mGroupChildCount.set(groupPosition, oldGroupChildCount + addSize);
         return new int[]{groupPosition, groupChildPosition};
+    }
+
+    public final void removeGroupChild(int groupPosition, int groupChildPosition) {
+        removeGroupChild(groupPosition, groupChildPosition, 1);
+    }
+
+    public final void clearGroupChild(int groupPosition) {
+        clearGroupChild(groupPosition, 0);
+    }
+
+    public final void clearGroupChild(int groupPosition, int groupChildBeginPosition) {
+        if (!checkGroupPosition(groupPosition)) {
+            return;
+        }
+        removeGroupChild(groupPosition,
+                         groupChildBeginPosition,
+                         mGroupChildCount.get(groupPosition) - groupChildBeginPosition);
     }
 
     private final void removeGroupChild(int groupPosition,
@@ -656,17 +690,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         mGroupChildCount.set(groupPosition, groupChildCount - removeCount);
     }
 
-    public final List<T> getGroups() {
-        if (mGroupCount <= 0) {
-            return null;
-        }
-        List<T> groups = new ArrayList<>(mGroupCount);
-        for (int i = 0; i < mGroupCount; i++) {
-            groups.add(getItem(convertGroupPosition(i)));
-        }
-        return groups;
-    }
-
     public final List<T> getGroupChilds(int groupPosition) {
         if (!checkGroupPosition(groupPosition)) {
             return null;
@@ -678,7 +701,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         int itemPosition = convertGroupPosition(groupPosition);
         List<T> groupChilds = new ArrayList<>(groupChildCount);
         for (int i = 0; i < groupChildCount; i++) {
-            groupChilds.add(getItem(itemPosition + 1 + i));
+            groupChilds.add(mList.get(itemPosition + 1 + i));
         }
         return groupChilds;
     }
@@ -694,24 +717,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         return mList.get(itemPosition);
     }
 
-    public final void removeGroupChild(int groupPosition, int groupChildPosition) {
-        removeGroupChild(groupPosition, groupChildPosition, 1);
-    }
-
-
-    public final void clearGroupChild(int groupPosition) {
-        clearGroupChild(groupPosition, 0);
-    }
-
-    public final void clearGroupChild(int groupPosition, int childStarPosition) {
-        if (!checkGroupChildPosition(groupPosition, childStarPosition)) {
-            return;
-        }
-        int groupChildCount = getGroupChildCount(groupPosition);
-        if (groupChildCount > 0) {
-            removeGroupChild(groupPosition, childStarPosition, groupChildCount - childStarPosition);
-        }
-    }
 
     public final void updateGroupChild(int groupPosition, int groupChildPosition, T groupChild) {
         if (!checkGroupChildPosition(groupPosition, groupChildPosition)) {
