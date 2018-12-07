@@ -1069,28 +1069,32 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getChildPositionByViewType(int viewType) {
         int p = -1;
-        T child;
+        if (mChildCount <= 0) {
+            return p;
+        }
+        int childItemPosition = mHeaderCount;
         for (int i = 0; i < mChildCount; i++) {
-            child = getChild(i);
-            if (viewType == getItemViewType(child) || viewType == getItemViewType(getItemPosition(
-                    child))) {
+            if (viewType == getItemViewType(childItemPosition)) {
                 p = i;
                 break;
             }
+            childItemPosition++;
         }
         return p;
     }
 
     public final int getLastChildPositionByViewType(int viewType) {
         int p = -1;
-        T child;
+        if (mChildCount <= 0) {
+            return p;
+        }
+        int childItemPosition = mHeaderCount + mChildCount - 1;
         for (int i = mChildCount - 1; i >= 0; i--) {
-            child = getChild(i);
-            if (viewType == getItemViewType(child) || viewType == getItemViewType(getItemPosition(
-                    child))) {
+            if (viewType == getItemViewType(childItemPosition)) {
                 p = i;
                 break;
             }
+            childItemPosition--;
         }
         return p;
     }
@@ -1106,27 +1110,33 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getGroupPositionByViewType(int viewType) {
         int p = -1;
-        T group;
+        if (mGroupCount <= 0) {
+            return p;
+        }
+        int groupItemPosition = mHeaderCount + mChildCount;
         for (int i = 0; i < mGroupCount; i++) {
-            group = getGroup(i);
-            if (viewType == getItemViewType(group) || viewType == getItemViewType(getItemPosition(
-                    group))) {
+            if (viewType == getItemViewType(groupItemPosition)) {
                 p = i;
                 break;
             }
+            groupItemPosition += mGroupChildCount.get(i) + 1;
         }
         return p;
     }
 
     public final int getLastGroupPositionByViewType(int viewType) {
         int p = -1;
-        T group;
+        if (mGroupCount <= 0) {
+            return p;
+        }
+        int groupItemPosition = convertGroupPosition(mGroupCount - 1);
         for (int i = mGroupCount - 1; i >= 0; i--) {
-            group = getGroup(i);
-            if (viewType == getItemViewType(group) || viewType == getItemViewType(getItemPosition(
-                    group))) {
+            if (viewType == getItemViewType(groupItemPosition)) {
                 p = i;
                 break;
+            }
+            if (i - 1 >= 0) {
+                groupItemPosition -= mGroupChildCount.get(i - 1) + 1;
             }
         }
         return p;
@@ -1143,28 +1153,29 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final int getFooterPositionByViewType(int viewType) {
         int p = -1;
-        T footer;
+        if (mFooterCount <= 0) {
+            return p;
+        }
+        int footerItemPosition = mList.size() - mFooterCount;
         for (int i = 0; i < mFooterCount; i++) {
-            footer = getFooter(i);
-            if (viewType == getItemViewType(footer) || viewType == getItemViewType(getItemPosition(
-                    footer))) {
+            if (viewType == getItemViewType(footerItemPosition)) {
                 p = i;
                 break;
             }
+            footerItemPosition++;
         }
         return p;
     }
 
     public final int getLastFooterPositionByViewType(int viewType) {
         int p = -1;
-        T footer;
+        int footerItemPosition = mList.size() - 1;
         for (int i = mFooterCount - 1; i >= 0; i--) {
-            footer = getFooter(i);
-            if (viewType == getItemViewType(footer) || viewType == getItemViewType(getItemPosition(
-                    footer))) {
+            if (viewType == getItemViewType(footerItemPosition)) {
                 p = i;
                 break;
             }
+            footerItemPosition--;
         }
         return p;
     }
