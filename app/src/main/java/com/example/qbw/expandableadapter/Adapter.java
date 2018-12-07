@@ -14,10 +14,12 @@ import com.example.qbw.expandableadapter.entity.Group;
 import com.example.qbw.expandableadapter.entity.Group1;
 import com.example.qbw.expandableadapter.entity.GroupChild;
 import com.example.qbw.expandableadapter.entity.Header;
+import com.example.qbw.expandableadapter.entity.Header1;
 import com.example.qbw.expandableadapter.holder.FooterViewHolder;
 import com.example.qbw.expandableadapter.holder.Group1ViewHolder;
 import com.example.qbw.expandableadapter.holder.GroupItemViewHolder;
 import com.example.qbw.expandableadapter.holder.GroupViewHolder;
+import com.example.qbw.expandableadapter.holder.Header1ViewHolder;
 import com.example.qbw.expandableadapter.holder.HeaderViewHolder;
 import com.example.qbw.expandableadapter.holder.ItemViewHolder;
 import com.qbw.log.XLog;
@@ -60,6 +62,9 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
             case Type.GROUP1:
                 viewHolder = new Group1ViewHolder(mContext, parent);
                 break;
+            case Type.HEADER1:
+                viewHolder = new Header1ViewHolder(mContext, parent);
+                break;
             default:
                 break;
         }
@@ -87,6 +92,8 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
             return Type.FOOTER;
         } else if (entity instanceof Group1) {
             return Type.GROUP1;
+        } else if (entity instanceof Header1) {
+            return Type.HEADER1;
         }
         return super.getItemViewType(position);
     }
@@ -108,7 +115,8 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
     }
 
     @Override
-    public void onBindStickyGroupViewHolder(int adapterPosition, int groupPosition,
+    public void onBindStickyGroupViewHolder(int adapterPosition,
+                                            int groupPosition,
                                             RecyclerView.ViewHolder stickyGroupViewHolder) {
         BaseViewHolder groupViewHolder = (BaseViewHolder) stickyGroupViewHolder;
         groupViewHolder.bindData(adapterPosition, getGroup(groupPosition));
@@ -118,14 +126,9 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
     public int getStickyGroupViewHolderHeight(int groupType) {//高度必须返回
         switch (groupType) {
             case Type.GROUP:
-                return (int) mContext
-                        .getResources()
-                        .getDimension(R.dimen.group_height);
+                return (int) mContext.getResources().getDimension(R.dimen.group_height);
             case Type.GROUP1:
-                return
-                        (int) mContext
-                                .getResources()
-                                .getDimension(R.dimen.group1_height);
+                return (int) mContext.getResources().getDimension(R.dimen.group1_height);
         }
         return 0;
     }
@@ -134,7 +137,9 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
     public int[] getStickyGroupViewHolderHorizontalMargin(int groupType) {
         switch (groupType) {
             case Type.GROUP1:
-                return new int[]{50, 150};//根据你的实际margin返回，必须与RecyclerView中对应GroupHolder的margin值一直，没有就返回null
+                return new int[]{
+                        50, 150
+                };//根据你的实际margin返回，必须与RecyclerView中对应GroupHolder的margin值一直，没有就返回null
         }
         return null;
     }
@@ -156,11 +161,13 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
 
 
     public static class Type {
-        public static final int HEADER = 5;
+
         public static final int CHILD = 1;
         public static final int GROUP = 2;
         public static final int GROUP_CHILD = 3;
         public static final int FOOTER = 4;
+        public static final int HEADER = 5;
         public static final int GROUP1 = 6;
+        public static final int HEADER1 = 7;
     }
 }

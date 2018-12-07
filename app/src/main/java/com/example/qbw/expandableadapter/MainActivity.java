@@ -19,6 +19,7 @@ import com.example.qbw.expandableadapter.entity.Group;
 import com.example.qbw.expandableadapter.entity.Group1;
 import com.example.qbw.expandableadapter.entity.GroupChild;
 import com.example.qbw.expandableadapter.entity.Header;
+import com.example.qbw.expandableadapter.entity.Header1;
 import com.qbw.log.XLog;
 import com.qbw.recyclerview.expandable.StickyLayout;
 
@@ -201,6 +202,17 @@ public class MainActivity extends Activity {
                 mAdapter.clearFooter();
             }
         }, 2500);*/
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.clearHeader(5);
+                mAdapter.clearChild(5);
+                mAdapter.removeAllGroup();
+                mAdapter.clearFooter(5);
+                mAdapter.addHeader(new Header1("header1 test"));
+                XLog.d("last header position by viewType:%d", mAdapter.getLastHeaderPositionByViewType(Adapter.Type.HEADER1));
+            }
+        }, 1500);
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
