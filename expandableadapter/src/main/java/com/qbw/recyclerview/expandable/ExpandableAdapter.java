@@ -94,6 +94,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final void clear() {
         mList.clear();
+        mHeaderCount = 0;
+        mChildCount = 0;
+        mGroupCount = 0;
+        if (mGroupChildCount != null) {
+            mGroupChildCount.clear();
+        }
+        mFooterCount = 0;
         notifyDataSetChanged();
     }
 
@@ -134,8 +141,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             itemAddSize = headerList.size();
         }
         XLog.v("Notify item from %d, count is %d", itemPosition, itemAddSize);
-        notifyItemRangeInserted(itemPosition, itemAddSize);
         mHeaderCount += itemAddSize;
+        notifyItemRangeInserted(itemPosition, itemAddSize);
         return headerPosition;
     }
 
@@ -146,8 +153,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             return;
         }
         mList.remove(itemPosition);
-        notifyItemRemoved(itemPosition);
         mHeaderCount--;
+        notifyItemRemoved(itemPosition);
     }
 
     public final void removeHeaders(List<T> headers) {
@@ -286,14 +293,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         if (child != null) {
             mList.add(itemPosition, child);
             addSize = 1;
-            notifyItemInserted(itemPosition);
         } else {
             mList.addAll(itemPosition, childList);
             addSize = childList.size();
-            notifyItemRangeInserted(itemPosition, addSize);
         }
         XLog.v("Notify item from %d, count is %d", itemPosition, addSize);
         mChildCount += addSize;
+        notifyItemRangeInserted(itemPosition, addSize);
         return childPosition;
     }
 
@@ -344,8 +350,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             XLog.i("Reset child removeCount from %d to %d", oldRemoveCount, removeCount);
         }
         mList.subList(itemBeginPosition, itemEndPosition).clear();
-        notifyItemRangeRemoved(itemBeginPosition, removeCount);
         mChildCount -= removeCount;
+        notifyItemRangeRemoved(itemBeginPosition, removeCount);
     }
 
     public final List<T> getChilds() {
@@ -461,12 +467,12 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         itemPosition += mHeaderCount + mChildCount;
         mList.add(itemPosition, group);
-        notifyItemInserted(itemPosition);
         mGroupCount += 1;
         if (mGroupChildCount == null) {
             mGroupChildCount = new ArrayList<>();
         }
         mGroupChildCount.add(groupPosition, 0);
+        notifyItemInserted(itemPosition);
         return groupPosition;
     }
 
@@ -495,9 +501,9 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         int groupChildCount = mGroupChildCount.get(groupPosition);
         mList.subList(itemPosition, itemPosition + groupChildCount + 1).clear();
-        notifyItemRangeRemoved(itemPosition, groupChildCount + 1);
         mGroupCount--;
         mGroupChildCount.remove(groupPosition);
+        notifyItemRangeRemoved(itemPosition, groupChildCount + 1);
     }
 
     public final List<T> getGroups() {
@@ -640,8 +646,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             mList.addAll(itemPosition, groupChildList);
             addSize = groupChildList.size();
         }
-        notifyItemRangeInserted(itemPosition, addSize);
         mGroupChildCount.set(groupPosition, oldGroupChildCount + addSize);
+        notifyItemRangeInserted(itemPosition, addSize);
         return new int[]{groupPosition, groupChildPosition};
     }
 
@@ -688,8 +694,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         int itemPosition = convertGroupPosition(groupPosition);
         int itemBeginPosition = itemPosition + groupChildBeingPosition + 1;
         mList.subList(itemBeginPosition, itemBeginPosition + removeCount).clear();
-        notifyItemRangeRemoved(itemBeginPosition, removeCount);
         mGroupChildCount.set(groupPosition, groupChildCount - removeCount);
+        notifyItemRangeRemoved(itemBeginPosition, removeCount);
     }
 
     public final List<T> getGroupChilds(int groupPosition) {
@@ -879,8 +885,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             addSize = footerList.size();
         }
         XLog.v("Notify item from %d, count is %d", itemPosition, addSize);
-        notifyItemRangeInserted(itemPosition, addSize);
         mFooterCount += addSize;
+        notifyItemRangeInserted(itemPosition, addSize);
         return footerPosition;
     }
 
@@ -926,8 +932,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
             XLog.i("Reset removeCount from %d to %d", oldRemoveCount, removeCount);
         }
         mList.subList(footerItemBeginPosition, footerItemEndPosition).clear();
-        notifyItemRangeRemoved(footerItemBeginPosition, removeCount);
         mFooterCount -= removeCount;
+        notifyItemRangeRemoved(footerItemBeginPosition, removeCount);
     }
 
     public final List<T> getFooters() {

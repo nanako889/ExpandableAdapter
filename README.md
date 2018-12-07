@@ -42,9 +42,9 @@
 
 Gradle:
 
-compile 'com.qbw.recyclerview:expandableadapter:4.0.1'
+compile 'com.qbw.recyclerview:expandableadapter:4.0.2'
 
-# V4.0.1
+# V4.0.2
 
 1.Fix some bug
 
