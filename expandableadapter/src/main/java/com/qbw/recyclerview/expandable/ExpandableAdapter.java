@@ -790,14 +790,23 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         if (mGroupCount > 0) {
             int groupItemPosition = mHeaderCount + mChildCount;
+            if (itemPosition <= groupItemPosition) {
+                return groupChildPosition;
+            }
+            int groupChildCount;
             for (int i = 0; i < mGroupCount; i++) {
-                for (int j = 0; j < mGroupChildCount.get(i); j++) {
-                    groupItemPosition += 1;
-                    if (groupItemPosition == itemPosition) {
-                        groupChildPosition[0] = i;
-                        groupChildPosition[1] = j;
-                        break;
+                groupChildCount = mGroupChildCount.get(i);
+                if (itemPosition > groupItemPosition && itemPosition <= groupItemPosition + groupChildCount) {
+                    for (int j = 0; j < groupChildCount; j++) {
+                        groupItemPosition += 1;
+                        if (groupItemPosition == itemPosition) {
+                            groupChildPosition[0] = i;
+                            groupChildPosition[1] = j;
+                            break;
+                        }
                     }
+                } else {
+                    groupItemPosition += groupChildCount;
                 }
                 groupItemPosition++;
             }
