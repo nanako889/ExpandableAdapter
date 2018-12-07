@@ -20,18 +20,13 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     private List<Integer> mGroupChildCount;
     private int mFooterCount;
 
-    private List<Integer> mHeaderViewTypePositionConstraints;
-    private List<Integer> mChildViewTypePositionConstraints;
-    private List<Integer> mGroupViewTypePositionConstraints;
-    private List<Integer> mFooterViewTypePositionConstraints;
-
     public ExpandableAdapter() {
         mList = new ArrayList<>();
     }
 
     @Override
     public int getItemViewType(int position) {
-        int vt = getItemViewType(getItem(position));
+        int vt = getItemViewType(mList.get(position));
         return vt == -1 ? super.getItemViewType(position) : vt;
     }
 
@@ -1180,36 +1175,20 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
     }
 
-    public void setHeaderViewTypePositionConstraints(List<Integer> headerViewTypePositionConstraints) {
-        mHeaderViewTypePositionConstraints = headerViewTypePositionConstraints;
+    public int getHeaderPosition(int currViewType, List<Integer> headerListViewTypes) {
+        return getPosition(0, headerListViewTypes, currViewType);
     }
 
-    public int getCorrectHeaderConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(0, mHeaderViewTypePositionConstraints, currViewType);
+    public int getChildPosition(int currViewType, List<Integer> childListViewTypes) {
+        return getPosition(1, childListViewTypes, currViewType);
     }
 
-    public void setChildViewTypePositionConstraints(List<Integer> childViewTypePositionConstraints) {
-        mChildViewTypePositionConstraints = childViewTypePositionConstraints;
+    public int getGroupPosition(int currViewType, List<Integer> groupListViewTypes) {
+        return getPosition(2, groupListViewTypes, currViewType);
     }
 
-    public int getCorrectChildConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(1, mChildViewTypePositionConstraints, currViewType);
-    }
-
-    public void setGroupViewTypePositionConstraints(List<Integer> groupViewTypePositionConstraints) {
-        mGroupViewTypePositionConstraints = groupViewTypePositionConstraints;
-    }
-
-    public int getCorrectGroupConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(2, mGroupViewTypePositionConstraints, currViewType);
-    }
-
-    public void setFooterViewTypePositionConstraints(List<Integer> footerViewTypePositionConstraints) {
-        mFooterViewTypePositionConstraints = footerViewTypePositionConstraints;
-    }
-
-    public int getCorrectFooterConstraintPosition(int currViewType) {
-        return getCorrectConstraintPosition(3, mFooterViewTypePositionConstraints, currViewType);
+    public int getFooterPosition(int currViewType, List<Integer> footerListViewTypes) {
+        return getPosition(3, footerListViewTypes, currViewType);
     }
 
     /**
@@ -1217,7 +1196,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
      * @param viewTypes    constrainted viewtype list
      * @param currViewType the viewType which you need to calculate the right position
      */
-    private int getCorrectConstraintPosition(int type, List<Integer> viewTypes, int currViewType) {
+    private int getPosition(int type, List<Integer> viewTypes, int currViewType) {
         if (viewTypes == null || viewTypes.isEmpty()) {
             XLog.w("Please call method setXXXViewTypePositionConstraints");
             return -1;
