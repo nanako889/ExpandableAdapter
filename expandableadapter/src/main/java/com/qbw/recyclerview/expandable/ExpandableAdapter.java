@@ -61,8 +61,11 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
                 removeGroupChild(groupChildPosition[0], groupChildPosition[1]);
                 return;
             }
-        } else if (mFooterCount > 0) {
+        } else if (mFooterCount > 0 && itemPosition >= mList.size() - mFooterCount) {
             mFooterCount--;
+        } else {
+            XLog.w("Remove item failed!");
+            return;
         }
         mList.remove(itemPosition);
         notifyItemRemoved(itemPosition);
