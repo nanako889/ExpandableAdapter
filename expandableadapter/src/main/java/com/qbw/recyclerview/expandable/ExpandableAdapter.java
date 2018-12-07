@@ -484,7 +484,8 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
     }
 
     public final void removeAllGroup() {
-        for (int i = 0; i < mGroupCount; i++) {
+        int groupCount = mGroupCount;
+        for (int i = 0; i < groupCount; i++) {
             removeGroup(0);
         }
     }

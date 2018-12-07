@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
             public void run() {
                 mAdapter.removeAllGroup();
             }
-        }, 250);
+        }, 2500);
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
