@@ -72,6 +72,21 @@ public class MainActivity extends Activity {
                     if (gcp[1] % 2 == 0) {
                         outRect.left = 150;
                     }
+                } else if (Adapter.Type.HEADER == mAdapter.getItemViewType(adapPos)) {
+                    int hp = mAdapter.getHeaderPosition(adapPos);
+                    if (hp % 2 == 0) {
+                        outRect.left = 150;
+                    }
+                } else if (Adapter.Type.CHILD == mAdapter.getItemViewType(adapPos)) {
+                    int hp = mAdapter.getChildPosition(adapPos);
+                    if (hp % 2 == 0) {
+                        outRect.left = 150;
+                    }
+                } else if (Adapter.Type.FOOTER == mAdapter.getItemViewType(adapPos)) {
+                    int hp = mAdapter.getFooterPosition(adapPos);
+                    if (hp % 2 == 0) {
+                        outRect.left = 150;
+                    }
                 }
             }
         });
@@ -121,9 +136,9 @@ public class MainActivity extends Activity {
             mAdapter.addChild(new Child("child " + i));
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 100; i++) {
             int groupPos = mAdapter.addGroup(new Group("group " + i));
-            for (int j = 0; j < 500; j++) {
+            for (int j = 0; j < 100; j++) {
                 mAdapter.addGroupChild(groupPos, new GroupChild("groupchild " + i + "," + j));
             }
         }
@@ -177,12 +192,15 @@ public class MainActivity extends Activity {
                 mAdapter.clearHeader(5);
             }
         }, 310);
-        mHandler.postDelayed(new Runnable() {
+        /*mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mAdapter.removeAllGroup();
+                mAdapter.clearHeader();
+                mAdapter.clearChild();
+                mAdapter.clearFooter();
             }
-        }, 2500);
+        }, 2500);*/
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
