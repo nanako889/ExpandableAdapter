@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
                     outRect.right = 150;
                 } else if (Adapter.Type.GROUP_CHILD == mAdapter.getItemViewType(adapPos)) {
                     int[] gcp = mAdapter.getGroupChildPosition(adapPos);
-                    XLog.d("pos:" + Arrays.toString(gcp));
+                    XLog.d("item position:%d, pos:%s", adapPos, Arrays.toString(gcp));
                     if (gcp[1] % 2 == 0) {
                         outRect.left = 150;
                     }
@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
         mAdapter.addFooter(new Footer("random footer last"));
         XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
 
-        /*mHandler.postDelayed(new Runnable() {
+        mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mAdapter.clearChild(5);
@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
             public void run() {
                 mAdapter.removeAllGroup();
             }
-        }, 250);*/
+        }, 250);
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
