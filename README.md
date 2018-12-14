@@ -137,5 +137,5 @@ compile 'com.qbw.recyclerview:expandableadapter:4.0.3'
 # Author:
 
 
-qbaowei@qq.com
+qbaowei@foxmail.com
 
