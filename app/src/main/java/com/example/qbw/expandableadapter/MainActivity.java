@@ -212,7 +212,7 @@ public class MainActivity extends Activity {
                 mAdapter.addHeader(new Header1("header1 test"));
                 XLog.d("last header position by viewType:%d", mAdapter.getLastHeaderPositionByViewType(Adapter.Type.HEADER1));
             }
-        }, 1500);
+        }, 15500);
     }
 
     /*private class InnerItemTouchHelper extends ItemTouchHelper {
