@@ -565,7 +565,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         }
         int itemPosition = 0;
         for (int i = 0; i < groupPosition; i++) {
-            itemPosition += mGroupChildCount.get(i);
+            itemPosition += mGroupChildCount.get(i) + 1;
         }
         return mHeaderCount + mChildCount + itemPosition;
     }
