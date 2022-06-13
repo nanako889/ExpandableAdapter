@@ -1,5 +1,5 @@
 # ExpandableAdapter
-    A adapter extenes RecyclerView's adapter support data grouping
+    A adapter extends RecyclerView's adapter support data grouping
 
 ![image](https://github.com/qbaowei/ExpandableAdapter/raw/master/screenshots/ExpandableAdapter.gif)
 
