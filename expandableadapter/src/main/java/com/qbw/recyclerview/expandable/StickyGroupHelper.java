@@ -1,12 +1,9 @@
 package com.qbw.recyclerview.expandable;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
-import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.qbw.log.XLog;
+import com.qbw.l.L;
 
 /**
  * @author qbw
@@ -55,11 +52,11 @@ class StickyGroupHelper {
         }
         stickyLayout.addView(mGroupViewHolder.itemView, params);
         stickyListener.onBindStickyGroupViewHolder(adapterPos, mGroupPos, mGroupViewHolder);
-        if (XLog.isEnabled()) XLog.d("add group[%d] sticky viewholder", mGroupPos);
+        if (L.GL.isEnabled()) L.GL.d("add group[%d] sticky viewholder", mGroupPos);
     }
 
     public void removeGroupViewHolder(StickyLayout stickyLayout) {
-        if (mGroupPos != -1 && XLog.isEnabled()) XLog.d("remove group[%d] viewholder", mGroupPos);
+        if (mGroupPos != -1 && L.GL.isEnabled()) L.GL.d("remove group[%d] viewholder", mGroupPos);
         if (mGroupViewHolder != null) stickyLayout.removeView(mGroupViewHolder.itemView);
         mGroupPos = RecyclerView.NO_POSITION;
         mGroupType = -1;
@@ -72,19 +69,19 @@ class StickyGroupHelper {
                                     int groupCount,
                                     StickyLayout.StickyListener stickyListener) {
         if (mGroupViewHolder == null) {
-            if (XLog.isEnabled()) XLog.e("group view holder 不应该为null");
+            if (L.GL.isEnabled()) L.GL.e("group view holder 不应该为null");
             return;
         } else if (mGroupType != groupType) {
-            if (XLog.isEnabled()) XLog.w("item type 一样才可以调用bind");
+            if (L.GL.isEnabled()) L.GL.w("item type 一样才可以调用bind");
             return;
         } else {
             checkResetItemViewSize(stickyLayout, groupPos, groupType, stickyListener);
             if (mGroupPos == groupPos && mGroupCount == groupCount) {
-                if (XLog.isEnabled()) XLog.v("group[%d] 已经bind过了", groupPos);
+                if (L.GL.isEnabled()) L.GL.v("group[%d] 已经bind过了", groupPos);
                 return;
             }
         }
-        if (XLog.isEnabled()) XLog.d("bind group %d sticky viewholder", groupPos);
+        if (L.GL.isEnabled()) L.GL.d("bind group %d sticky viewholder", groupPos);
         mGroupPos = groupPos;
         mGroupType = groupType;
         mGroupCount = groupCount;
@@ -107,15 +104,15 @@ class StickyGroupHelper {
         int realHeight = mGroupViewHolder.itemView.getHeight();
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mGroupViewHolder.itemView.getLayoutParams();
         if (realWidth != targetWidth || realHeight != targetHeight || (hasHMargin && (params.leftMargin != hMargins[0] || params.rightMargin != hMargins[1]))) {
-            if (XLog.isEnabled()) {
+            if (L.GL.isEnabled()) {
                 if (realWidth != targetWidth) {
-                    XLog.w("realWidth[%d], targetWidth[%d]", realWidth, targetWidth);
+                    L.GL.w("realWidth[%d], targetWidth[%d]", realWidth, targetWidth);
                 }
                 if (realHeight != targetHeight) {
-                    XLog.w("realHeight[%d], targetHeight[%d]", realHeight, targetHeight);
+                    L.GL.w("realHeight[%d], targetHeight[%d]", realHeight, targetHeight);
                 }
                 if (hasHMargin && (params.leftMargin != hMargins[0] || params.rightMargin != hMargins[1])) {
-                    XLog.w("params margin[%d,%d], targetMargin[%d,%d]", params.leftMargin, params.rightMargin, hMargins[0], hMargins[1]);
+                    L.GL.w("params margin[%d,%d], targetMargin[%d,%d]", params.leftMargin, params.rightMargin, hMargins[0], hMargins[1]);
                 }
             }
             params.width = targetWidth;
@@ -125,7 +122,7 @@ class StickyGroupHelper {
                 params.rightMargin = hMargins[1];
             }
             mGroupViewHolder.itemView.setLayoutParams(params);
-            if (XLog.isEnabled()) XLog.w("group[%d] 重新设置宽高", groupPos);
+            if (L.GL.isEnabled()) L.GL.w("group[%d] 重新设置宽高", groupPos);
         }
     }
 

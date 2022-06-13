@@ -8,10 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.qbw.log.XLog;
 import com.qbw.recyclerview.util.PositionUtil;
 
 import java.lang.ref.WeakReference;
+import com.qbw.l.L;
 
 /**
  * @author qbw
@@ -57,17 +57,17 @@ public class StickyLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (XLog.isEnabled()) XLog.d("changed[%b],mStickyGroupY[%d]", changed, mStickyGroupY);
+        if (L.GL.isEnabled()) L.GL.d("changed[%b],mStickyGroupY[%d]", changed, mStickyGroupY);
         if (getChildCount() > 1) {
             View childView = getChildAt(1);
             childView.layout(childView.getLeft(),
                     mStickyGroupY,
                     childView.getRight(),
                     childView.getMeasuredHeight() + mStickyGroupY);
-            if (XLog.isEnabled()) {
+            if (L.GL.isEnabled()) {
                 Rect rect = new Rect();
                 childView.getHitRect(rect);
-                XLog.v("sticky group rect %s", rect.toString());
+                L.GL.v("sticky group rect %s", rect.toString());
             }
             removeCallbacks(mUpdateDelayRunn);
             postDelayed(mUpdateDelayRunn, getUpdateDelay());
@@ -95,7 +95,7 @@ public class StickyLayout extends FrameLayout {
         public void run() {
             StickyLayout sl = mWRStickyLayout.get();
             if (sl == null) return;
-            XLog.d("delay update stickgroup y");
+            L.GL.d("delay update stickgroup y");
             sl.update();
         }
     }
@@ -129,7 +129,7 @@ public class StickyLayout extends FrameLayout {
         }
         int firstVisibleItemPosition = PositionUtil.findFirstVisibleItemPosition(mRecyclerView);
         if (RecyclerView.NO_POSITION == firstVisibleItemPosition) {
-            if (XLog.isEnabled()) XLog.w("no visible item");
+            if (L.GL.isEnabled()) L.GL.w("no visible item");
             return false;
         }
         int groupPosition = -1;
@@ -159,14 +159,14 @@ public class StickyLayout extends FrameLayout {
         RecyclerView.ViewHolder nextVh = null;//下一个需要判断是否相交的holder
         if (nextGroupPosition < groupCount) {//group下面还有group
             nextAdapterPosition = mExpandableAdapter.convertGroupPosition(nextGroupPosition);
-            if (XLog.isEnabled()) XLog.v("NextGroup, next adap pos [%d]", nextAdapterPosition);
+            if (L.GL.isEnabled()) L.GL.v("NextGroup, next adap pos [%d]", nextAdapterPosition);
         } else {
             int fcount = mExpandableAdapter.getFooterCount();
-            if (XLog.isEnabled())
-                XLog.d("group[%d] is the last.footer count [%d]", groupPosition, fcount);
+            if (L.GL.isEnabled())
+                L.GL.d("group[%d] is the last.footer count [%d]", groupPosition, fcount);
             if (fcount > 0) {//group下面还有footer
                 nextAdapterPosition = mExpandableAdapter.convertFooterPosition(0);
-                if (XLog.isEnabled()) XLog.v("NextFooter, next adap pos [%d]", nextAdapterPosition);
+                if (L.GL.isEnabled()) L.GL.v("NextFooter, next adap pos [%d]", nextAdapterPosition);
             }
         }
 
@@ -175,13 +175,13 @@ public class StickyLayout extends FrameLayout {
         }
 
         if (nextVh == null) {
-            if (XLog.isEnabled()) XLog.v("next viewholder is null");
+            if (L.GL.isEnabled()) L.GL.v("next viewholder is null");
             mStickyGroupY = 0;
         } else {
             int nextHolderTop = nextVh.itemView.getTop();
             int groupHolderHeight = mStickyListener.getStickyGroupViewHolderHeight(groupViewType);
-            if (XLog.isEnabled())
-                XLog.v("next rect top[%d], sticky rect height[%d]", nextHolderTop, groupHolderHeight);
+            if (L.GL.isEnabled())
+                L.GL.v("next rect top[%d], sticky rect height[%d]", nextHolderTop, groupHolderHeight);
             if (nextHolderTop >= groupHolderHeight) {
                 mStickyGroupY = 0;
             } else {
@@ -207,7 +207,7 @@ public class StickyLayout extends FrameLayout {
 
         if (getChildCount() > 1) {
             if (getChildAt(1).getTop() == mStickyGroupY) {
-                if (XLog.isEnabled()) XLog.v("equal sticky group layout y [%d]", mStickyGroupY);
+                if (L.GL.isEnabled()) L.GL.v("equal sticky group layout y [%d]", mStickyGroupY);
                 return false;
             }
             requestLayout();
@@ -219,7 +219,7 @@ public class StickyLayout extends FrameLayout {
     private class StickyScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (XLog.isEnabled()) XLog.v("dx[%d],dy[%d]", dx, dy);
+            if (L.GL.isEnabled()) L.GL.v("dx[%d],dy[%d]", dx, dy);
             if (update()) {
                 removeCallbacks(mUpdateDelayRunn);
             }
@@ -227,7 +227,7 @@ public class StickyLayout extends FrameLayout {
 
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            if (XLog.isEnabled()) XLog.v("newState[%d]", newState);
+            if (L.GL.isEnabled()) L.GL.v("newState[%d]", newState);
             if (update()) {
                 removeCallbacks(mUpdateDelayRunn);
             }

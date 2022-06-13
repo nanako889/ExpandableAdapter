@@ -8,19 +8,16 @@ import android.os.Handler;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.qbw.expandableadapter.entity.BaseEntity;
 import com.example.qbw.expandableadapter.entity.Child;
 import com.example.qbw.expandableadapter.entity.Footer;
 import com.example.qbw.expandableadapter.entity.Group;
-import com.example.qbw.expandableadapter.entity.Group1;
 import com.example.qbw.expandableadapter.entity.GroupChild;
 import com.example.qbw.expandableadapter.entity.Header;
 import com.example.qbw.expandableadapter.entity.Header1;
-import com.qbw.log.XLog;
+import com.qbw.l.L;
 import com.qbw.recyclerview.expandable.StickyLayout;
 
 import java.text.SimpleDateFormat;
@@ -47,9 +44,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         initView();
-        XLog.setEnabled(true);//show log
+        L.GL.setEnabled(true);//show log
 
-        Context appCtx = getApplicationContext();//要养成好的习惯，除非需要Activity作为Context，否则能用ApplicationContext就尽量使用，减少对Activity的强引用
+        Context appCtx = getApplicationContext();//要养成好的习惯，除非需要Activity作为Context，否则能用ApplicationContext
+        // 就尽量使用，减少对Activity的强引用
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(appCtx));
         mRecyclerView.setAdapter(mAdapter = new Adapter(appCtx));
@@ -69,7 +67,7 @@ public class MainActivity extends Activity {
                     outRect.right = 150;
                 } else if (Adapter.Type.GROUP_CHILD == mAdapter.getItemViewType(adapPos)) {
                     int[] gcp = mAdapter.getGroupChildPosition(adapPos);
-                    XLog.d("item position:%d, pos:%s", adapPos, Arrays.toString(gcp));
+                    L.GL.d("item position:%d, pos:%s", adapPos, Arrays.toString(gcp));
                     if (gcp[1] % 2 == 0) {
                         outRect.left = 150;
                     }
@@ -101,8 +99,9 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
                 if (l) {
                     // 如果你使用的是GridLayoutManager，那么Group必须是占有一整行，否则会报错
-                    GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this.getApplicationContext(),
-                                                                                3);
+                    GridLayoutManager gridLayoutManager =
+                            new GridLayoutManager(MainActivity.this.getApplicationContext(),
+                                    3);
                     gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int position) {
@@ -119,7 +118,8 @@ public class MainActivity extends Activity {
 
         });
 
-        test();
+        //test();
+        testDiff();
     }
 
     private void initView() {
@@ -128,8 +128,80 @@ public class MainActivity extends Activity {
         mStickyLayout = (StickyLayout) findViewById(R.id.stickylayout);
     }
 
+    private void testDiff() {
+        mAdapter.addHeader(new Header("h1"));
+        mAdapter.addHeader(new Header("h2"));
+        mAdapter.addChild(new Child("c1"));
+        mAdapter.addChild(new Child("c2"));
+        mAdapter.addGroup(new Group("group"));
+        mAdapter.addGroupChild(0, new GroupChild("gc1"));
+        mAdapter.addFooter(new Footer("f1"));
+        mAdapter.addFooter(new Footer("f2"));
+        mAdapter.setBottom(new Footer("我是bottom"));
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<Header> headerList = new ArrayList<>();
+                headerList.add(new Header("更新h1"));
+                headerList.add(new Header("h2"));
+                headerList.add(new Header("更新h3"));
+                headerList.add(new Header("更新h4"));
+                mAdapter.setHeader(headerList);
+                List<Child> children = new ArrayList<>();
+                children.add(new Child("更新c1"));
+                children.add(new Child("c2"));
+                children.add(new Child("更新c3"));
+                children.add(new Child("更新c4"));
+                mAdapter.setChild(children);
+                List<Footer> footerList = new ArrayList<>();
+                footerList.add(new Footer("更新f1"));
+                footerList.add(new Footer("f2"));
+                mAdapter.setFooter(footerList);
+                List<GroupChild> groupChildren = new ArrayList<>();
+                groupChildren.add(new GroupChild("更新gc1"));
+                mAdapter.setGroupChild(0, groupChildren);
+                mAdapter.removeBottom();
+            }
+        }, 2000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                List<Header> headerList = new ArrayList<>();
+                headerList.add(new Header("uh11"));
+                mAdapter.setHeader(headerList);
+                List<Child> children = new ArrayList<>();
+                children.add(new Child("c1"));
+                children.add(new Child("c2"));
+                children.add(new Child("c3"));
+                children.add(new Child("c4"));
+                mAdapter.setChild(children);
+                List<Footer> footerList = new ArrayList<>();
+                footerList.add(new Footer("uf1"));
+                footerList.add(new Footer("uf2"));
+                footerList.add(new Footer("uf3"));
+                mAdapter.setFooter(footerList);
+                List<GroupChild> groupChildren = new ArrayList<>();
+                groupChildren.add(new GroupChild("更新gc1"));
+                groupChildren.add(new GroupChild("gc1"));
+                mAdapter.setGroupChild(0, groupChildren);
+                mAdapter.setBottom(new Footer("botoom我回来了"));
+
+            }
+        }, 10000);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.clearFooter();
+                mAdapter.setBottom(new Footer("botoom 111我回来了"));
+            }
+        }, 15000);
+    }
+
     private void test() {
-        XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
+        L.GL.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
         for (int i = 0; i < 5; i++) {
             mAdapter.addHeader(new Header("header " + i));
         }
@@ -173,7 +245,7 @@ public class MainActivity extends Activity {
         mAdapter.addFooter(0, new Footer("random footer 0"));
         mAdapter.addFooter(1, new Footer("random footer 1"));
         mAdapter.addFooter(new Footer("random footer last"));
-        XLog.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
+        L.GL.d(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss sss").format(System.currentTimeMillis()));
 
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -210,7 +282,8 @@ public class MainActivity extends Activity {
                 mAdapter.removeAllGroup();
                 mAdapter.clearFooter(5);
                 mAdapter.addHeader(new Header1("header1 test"));
-                XLog.d("last header position by viewType:%d", mAdapter.getLastHeaderPositionByViewType(Adapter.Type.HEADER1));
+                L.GL.d("last header position by viewType:%d",
+                        mAdapter.getLastHeaderPositionByViewType(Adapter.Type.HEADER1));
             }
         }, 15500);
     }
@@ -242,7 +315,8 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder
+        target) {
             mAdapter.swapItem(viewHolder.getAdapterPosition(), target.getAdapterPosition());
             return true;
         }

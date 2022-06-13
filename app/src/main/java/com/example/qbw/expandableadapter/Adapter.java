@@ -22,7 +22,7 @@ import com.example.qbw.expandableadapter.holder.GroupViewHolder;
 import com.example.qbw.expandableadapter.holder.Header1ViewHolder;
 import com.example.qbw.expandableadapter.holder.HeaderViewHolder;
 import com.example.qbw.expandableadapter.holder.ItemViewHolder;
-import com.qbw.log.XLog;
+import com.qbw.l.L;
 import com.qbw.recyclerview.expandable.ExpandableAdapter;
 import com.qbw.recyclerview.expandable.StickyLayout;
 
@@ -32,7 +32,7 @@ import com.qbw.recyclerview.expandable.StickyLayout;
  */
 
 
-public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayout.StickyListener {
+public class Adapter extends ExpandableAdapter implements StickyLayout.StickyListener {
 
     private Context mContext;
 
@@ -79,7 +79,7 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
 
     @Override
     public int getItemViewType(int position) {
-        BaseEntity entity = getItem(position);
+        Object entity = getItem(position);
         if (entity instanceof Header) {
             return Type.HEADER;
         } else if (entity instanceof Child) {
@@ -159,6 +159,13 @@ public class Adapter extends ExpandableAdapter<BaseEntity> implements StickyLayo
         return Type.FOOTER == getItemViewType(adapPos);
     }
 
+    @Override
+    public boolean isSameData(Object oldData, Object newData) {
+        if (oldData instanceof BaseEntity && newData instanceof BaseEntity) {
+            return ((BaseEntity) oldData).text.equals(((BaseEntity) newData).text);
+        }
+        return super.isSameData(oldData, newData);
+    }
 
     public static class Type {
 

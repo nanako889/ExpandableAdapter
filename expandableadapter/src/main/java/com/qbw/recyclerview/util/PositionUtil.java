@@ -2,8 +2,7 @@ package com.qbw.recyclerview.util;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
-import com.qbw.log.XLog;
+import com.qbw.l.L;
 
 /**
  * @author qbw
@@ -19,7 +18,7 @@ public class PositionUtil {
         if (layoutManager instanceof LinearLayoutManager) {
             pos = ((LinearLayoutManager) layoutManager).findFirstCompletelyVisibleItemPosition();
         } else {
-            if (XLog.isEnabled()) XLog.w("请知悉:暂时只支持LinearLayoutManager 垂直方向!");
+            if (L.GL.isEnabled()) L.GL.w("请知悉:暂时只支持LinearLayoutManager 垂直方向!");
         }
         return pos;
     }
@@ -34,7 +33,7 @@ public class PositionUtil {
         if (layoutManager instanceof LinearLayoutManager) {
             pos = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         } else {
-            if (XLog.isEnabled()) XLog.w("请知悉:暂时只支持LinearLayoutManager 垂直方向!");
+            if (L.GL.isEnabled()) L.GL.w("请知悉:暂时只支持LinearLayoutManager 垂直方向!");
         }
         return pos;
     }
