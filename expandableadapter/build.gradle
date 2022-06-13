@@ -22,32 +22,24 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.qbw.l:l:1.0'
+    implementation 'top.qinbaowei:log:1.0'
 }
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'expandableadapter'
-
-    publishedGroupId = 'com.qbw.recyclerview'
-    libraryName = 'expandableadapter'
-    artifact = 'expandableadapter'
-
-    libraryDescription = 'Base RecyclerView.Adapter, support header, child, group, groupchild, footer.'
-
-    siteUrl = 'https://github.com/qbwjly/ExpandableAdapter'
-    gitUrl = 'https://github.com/qbwjly/ExpandableAdapter.git'
-
-    libraryVersion = '4.0.5'
-
-    developerId = 'qinbaowei'
-    developerName = 'qinbaowei'
-    developerEmail = 'qbaowei@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-
-    apply from: 'bintray_install.gradle'
-    apply from: 'bintray_upload.gradle'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.17.0'
+    }
 }
+
+allprojects {
+    plugins.withId("com.vanniktech.maven.publish") {
+        mavenPublish {
+            sonatypeHost = "S01"
+        }
+    }
+}
+
+apply plugin: "com.vanniktech.maven.publish"
