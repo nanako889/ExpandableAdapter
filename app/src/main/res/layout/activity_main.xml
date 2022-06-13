@@ -2,19 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/app_name"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            />
 
         <TextView
             android:id="@+id/change_txt"
@@ -22,18 +25,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
             android:text="change l or g"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            />
     </FrameLayout>
 
-    <com.qbw.recyclerview.expandable.StickyLayout
-        android:id="@+id/stickylayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </com.qbw.recyclerview.expandable.StickyLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
 </LinearLayout>

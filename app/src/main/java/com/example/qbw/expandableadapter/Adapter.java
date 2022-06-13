@@ -1,11 +1,8 @@
 package com.example.qbw.expandableadapter;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
-import android.view.Display;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import com.example.qbw.expandableadapter.entity.BaseEntity;
 import com.example.qbw.expandableadapter.entity.Child;
@@ -22,9 +19,7 @@ import com.example.qbw.expandableadapter.holder.GroupViewHolder;
 import com.example.qbw.expandableadapter.holder.Header1ViewHolder;
 import com.example.qbw.expandableadapter.holder.HeaderViewHolder;
 import com.example.qbw.expandableadapter.holder.ItemViewHolder;
-import com.qbw.l.L;
 import com.qbw.recyclerview.expandable.ExpandableAdapter;
-import com.qbw.recyclerview.expandable.StickyLayout;
 
 /**
  * @author QBW
@@ -32,7 +27,7 @@ import com.qbw.recyclerview.expandable.StickyLayout;
  */
 
 
-public class Adapter extends ExpandableAdapter implements StickyLayout.StickyListener {
+public class Adapter extends ExpandableAdapter {
 
     private Context mContext;
 
@@ -96,67 +91,6 @@ public class Adapter extends ExpandableAdapter implements StickyLayout.StickyLis
             return Type.HEADER1;
         }
         return super.getItemViewType(position);
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateStickyGroupViewHolder(int groupType, ViewGroup parent) {
-        RecyclerView.ViewHolder viewHolder = null;
-        switch (groupType) {
-            case Type.GROUP:
-                viewHolder = new GroupViewHolder(mContext, parent);
-                break;
-            case Type.GROUP1:
-                viewHolder = new Group1ViewHolder(mContext, parent);
-                break;
-            default:
-                break;
-        }
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindStickyGroupViewHolder(int adapterPosition,
-                                            int groupPosition,
-                                            RecyclerView.ViewHolder stickyGroupViewHolder) {
-        BaseViewHolder groupViewHolder = (BaseViewHolder) stickyGroupViewHolder;
-        groupViewHolder.bindData(adapterPosition, getGroup(groupPosition));
-    }
-
-    @Override
-    public int getStickyGroupViewHolderHeight(int groupType) {//高度必须返回
-        switch (groupType) {
-            case Type.GROUP:
-                return (int) mContext.getResources().getDimension(R.dimen.group_height);
-            case Type.GROUP1:
-                return (int) mContext.getResources().getDimension(R.dimen.group1_height);
-        }
-        return 0;
-    }
-
-    @Override
-    public int[] getStickyGroupViewHolderHorizontalMargin(int groupType) {
-        switch (groupType) {
-            case Type.GROUP1:
-                return new int[]{
-                        50, 150
-                };//根据你的实际margin返回，必须与RecyclerView中对应GroupHolder的margin值一直，没有就返回null
-        }
-        return null;
-    }
-
-    @Override
-    public boolean isPostionGroup(int adapPos) {
-        return Type.GROUP == getItemViewType(adapPos) || Type.GROUP1 == getItemViewType(adapPos);
-    }
-
-    @Override
-    public boolean isPostionGroupChild(int adapPos) {
-        return Type.GROUP_CHILD == getItemViewType(adapPos);
-    }
-
-    @Override
-    public boolean isPositionFooter(int adapPos) {
-        return Type.FOOTER == getItemViewType(adapPos);
     }
 
     @Override

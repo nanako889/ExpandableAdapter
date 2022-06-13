@@ -40,11 +40,11 @@ public abstract class BaseExpandableAdapter<T> extends RecyclerView.Adapter<Recy
     public abstract int getFooterCount();
 
     /**
-     * 只有调用了setHeader,setChild,setFooter的时候才会调用
+     * Called when setHeader,setChild or setFooter is called
      *
      * @param oldData
      * @param newData
-     * @return true表示为同一条数据不需要刷新ui，false表示需要刷新ui
+     * @return true[will not update ui] false[update ui]
      */
     public abstract boolean isSameData(Object oldData, Object newData);
 }

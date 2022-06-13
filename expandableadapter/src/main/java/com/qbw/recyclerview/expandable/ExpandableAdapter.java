@@ -116,23 +116,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final void setHeader(List<T> newHeaderList) {
         setHeader(0, mHeaderCount > 0 ? mHeaderCount - 1 : 0, newHeaderList);
-        /*int newDataSize = newHeaderList == null ? 0 : newHeaderList.size();
-        if (newDataSize <= 0) {
-            clearHeader();
-        } else if (mHeaderCount <= 0) {
-            addHeader(newHeaderList);
-        } else {
-            for (int i = 0; i < mHeaderCount && i < newDataSize; i++) {
-                if (!isSameData(getHeader(i), newHeaderList.get(i))) {
-                    updateHeader(i, newHeaderList.get(i));
-                }
-            }
-            if (mHeaderCount > newDataSize) {
-                clearHeader(newDataSize);
-            } else if (mHeaderCount < newDataSize) {
-                addHeader(newHeaderList.subList(mHeaderCount, newDataSize));
-            }
-        }*/
     }
 
     public final void setHeader(int beginIndex, int endIndex, List<T> newHeaderList) {
@@ -356,23 +339,6 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final void setChild(List<T> newChildList) {
         setChild(0, mChildCount > 0 ? mChildCount - 1 : 0, newChildList);
-        /*int newDataSize = newChildList == null ? 0 : newChildList.size();
-        if (newDataSize <= 0) {
-            clearChild();
-        } else if (mChildCount <= 0) {
-            addChild(newChildList);
-        } else {
-            for (int i = 0; i < mChildCount && i < newDataSize; i++) {
-                if (!isSameData(getChild(i), newChildList.get(i))) {
-                    updateChild(i, newChildList.get(i));
-                }
-            }
-            if (mChildCount > newDataSize) {
-                clearChild(newDataSize);
-            } else if (mChildCount < newDataSize) {
-                addChild(newChildList.subList(mChildCount, newDataSize));
-            }
-        }*/
     }
 
     public final void setChild(int beginIndex, int endIndex, List<T> newChildList) {
@@ -1332,7 +1298,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final void setBottom(T bottom) {
         if (bottom == null) {
-            L.GL.w("添加的bottom数据为null!!!");
+            L.GL.w("bottom is null!!!");
             return;
         }
         int size = mList.size();
@@ -1348,7 +1314,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final void removeBottom() {
         if (mBottomCount == 0) {
-            L.GL.w("没有添加bottom数据，无法删除!!!");
+            L.GL.w("no bottom to remove!!!");
             return;
         }
         int size = mList.size();
@@ -1363,7 +1329,7 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final T getBottom() {
         if (mBottomCount == 0) {
-            L.GL.w("没有添加过bottom数据!!!");
+            L.GL.w("no bottom data!!!");
             return null;
         }
         return mList.get(mList.size() - 1);

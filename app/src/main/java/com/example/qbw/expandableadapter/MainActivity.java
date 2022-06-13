@@ -18,7 +18,6 @@ import com.example.qbw.expandableadapter.entity.GroupChild;
 import com.example.qbw.expandableadapter.entity.Header;
 import com.example.qbw.expandableadapter.entity.Header1;
 import com.qbw.l.L;
-import com.qbw.recyclerview.expandable.StickyLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ public class MainActivity extends Activity {
 
     private RecyclerView mRecyclerView;
     private Adapter mAdapter;
-
-    private StickyLayout mStickyLayout;
 
     private TextView mTextView;
 
@@ -45,10 +42,7 @@ public class MainActivity extends Activity {
 
         initView();
         L.GL.setEnabled(true);//show log
-
-        Context appCtx = getApplicationContext();//要养成好的习惯，除非需要Activity作为Context，否则能用ApplicationContext
-        // 就尽量使用，减少对Activity的强引用
-
+        Context appCtx = getApplicationContext();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(appCtx));
         mRecyclerView.setAdapter(mAdapter = new Adapter(appCtx));
         mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
@@ -92,13 +86,10 @@ public class MainActivity extends Activity {
         //InnerItemTouchHelper touchHelper = new InnerItemTouchHelper(new InnerItemTouchCallback());
         //touchHelper.attachToRecyclerView(mRecyclerView);
 
-        mStickyLayout.init(false);
-
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (l) {
-                    // 如果你使用的是GridLayoutManager，那么Group必须是占有一整行，否则会报错
                     GridLayoutManager gridLayoutManager =
                             new GridLayoutManager(MainActivity.this.getApplicationContext(),
                                     3);
@@ -125,7 +116,6 @@ public class MainActivity extends Activity {
     private void initView() {
         mTextView = (TextView) findViewById(R.id.change_txt);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        mStickyLayout = (StickyLayout) findViewById(R.id.stickylayout);
     }
 
     private void testDiff() {
@@ -137,29 +127,29 @@ public class MainActivity extends Activity {
         mAdapter.addGroupChild(0, new GroupChild("gc1"));
         mAdapter.addFooter(new Footer("f1"));
         mAdapter.addFooter(new Footer("f2"));
-        mAdapter.setBottom(new Footer("我是bottom"));
+        mAdapter.setBottom(new Footer("bottom"));
 
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 List<Header> headerList = new ArrayList<>();
-                headerList.add(new Header("更新h1"));
+                headerList.add(new Header("update h1"));
                 headerList.add(new Header("h2"));
-                headerList.add(new Header("更新h3"));
-                headerList.add(new Header("更新h4"));
+                headerList.add(new Header("update h3"));
+                headerList.add(new Header("update h4"));
                 mAdapter.setHeader(headerList);
                 List<Child> children = new ArrayList<>();
-                children.add(new Child("更新c1"));
+                children.add(new Child("update c1"));
                 children.add(new Child("c2"));
-                children.add(new Child("更新c3"));
-                children.add(new Child("更新c4"));
+                children.add(new Child("update c3"));
+                children.add(new Child("update c4"));
                 mAdapter.setChild(children);
                 List<Footer> footerList = new ArrayList<>();
-                footerList.add(new Footer("更新f1"));
+                footerList.add(new Footer("update f1"));
                 footerList.add(new Footer("f2"));
                 mAdapter.setFooter(footerList);
                 List<GroupChild> groupChildren = new ArrayList<>();
-                groupChildren.add(new GroupChild("更新gc1"));
+                groupChildren.add(new GroupChild("update gc1"));
                 mAdapter.setGroupChild(0, groupChildren);
                 mAdapter.removeBottom();
             }
@@ -183,10 +173,10 @@ public class MainActivity extends Activity {
                 footerList.add(new Footer("uf3"));
                 mAdapter.setFooter(footerList);
                 List<GroupChild> groupChildren = new ArrayList<>();
-                groupChildren.add(new GroupChild("更新gc1"));
+                groupChildren.add(new GroupChild("update gc1"));
                 groupChildren.add(new GroupChild("gc1"));
                 mAdapter.setGroupChild(0, groupChildren);
-                mAdapter.setBottom(new Footer("botoom我回来了"));
+                mAdapter.setBottom(new Footer("botoom back"));
 
             }
         }, 10000);
@@ -195,7 +185,7 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 mAdapter.clearFooter();
-                mAdapter.setBottom(new Footer("botoom 111我回来了"));
+                mAdapter.setBottom(new Footer("botoom 111 back"));
             }
         }, 15000);
     }
