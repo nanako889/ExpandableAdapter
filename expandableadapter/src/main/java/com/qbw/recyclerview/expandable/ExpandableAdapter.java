@@ -118,34 +118,28 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         setHeader(0, mHeaderCount > 0 ? mHeaderCount - 1 : 0, newHeaderList);
     }
 
-    public final void setHeader(int beginIndex, List<T> newHeaderList) {
-        setHeader(beginIndex, mHeaderCount - 1, newHeaderList);
-    }
-
     public final void setHeader(int beginIndex, int endIndex, List<T> newHeaderList) {
-        if (beginIndex < 0 || endIndex < 0) {
+        if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex) {
             L.GL.e("beginIndex %d, endIndex %d !!!", beginIndex, endIndex);
             return;
         }
-        if (beginIndex >= endIndex) {
+        int pendingSetCount = endIndex - beginIndex + 1;
+        int newDataSize = newHeaderList == null ? 0 : newHeaderList.size();
+        if (newDataSize <= 0) {
+            removeHeader(beginIndex, pendingSetCount);
+        } else if (mHeaderCount <= beginIndex) {
             addHeader(newHeaderList);
         } else {
-            int pendingSetCount = endIndex - beginIndex + 1;
-            int newDataSize = newHeaderList == null ? 0 : newHeaderList.size();
-            if (newDataSize <= 0) {
-                removeHeader(beginIndex, pendingSetCount);
-            } else {
-                for (int i = 0; i < pendingSetCount && i < newDataSize; i++) {
-                    if (!isSameData(getHeader(i + beginIndex), newHeaderList.get(i))) {
-                        updateHeader(i + beginIndex, newHeaderList.get(i));
-                    }
+            for (int i = 0; i < pendingSetCount && i < newDataSize; i++) {
+                if (!isSameData(getHeader(i + beginIndex), newHeaderList.get(i))) {
+                    updateHeader(i + beginIndex, newHeaderList.get(i));
                 }
-                if (pendingSetCount > newDataSize) {
-                    clearHeader(newDataSize);
-                } else if (pendingSetCount < newDataSize) {
-                    addHeader(endIndex + 1, newHeaderList.subList(pendingSetCount,
-                            newDataSize));
-                }
+            }
+            if (pendingSetCount > newDataSize) {
+                clearHeader(newDataSize);
+            } else if (pendingSetCount < newDataSize) {
+                addHeader(endIndex + 1, newHeaderList.subList(pendingSetCount,
+                        newDataSize));
             }
         }
     }
@@ -347,34 +341,28 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
         setChild(0, mChildCount > 0 ? mChildCount - 1 : 0, newChildList);
     }
 
-    public final void setChild(int beginIndex, List<T> newChildList) {
-        setChild(beginIndex, mChildCount - 1, newChildList);
-    }
-
     public final void setChild(int beginIndex, int endIndex, List<T> newChildList) {
-        if (beginIndex < 0 || endIndex < 0) {
+        if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex) {
             L.GL.e("beginIndex %d, endIndex %d !!!", beginIndex, endIndex);
             return;
         }
-        if (beginIndex >= endIndex) {
+        int pendingSetCount = endIndex - beginIndex + 1;
+        int newDataSize = newChildList == null ? 0 : newChildList.size();
+        if (newDataSize <= 0) {
+            removeChild(beginIndex, pendingSetCount);
+        } else if (mChildCount <= beginIndex) {
             addChild(newChildList);
         } else {
-            int pendingSetCount = endIndex - beginIndex + 1;
-            int newDataSize = newChildList == null ? 0 : newChildList.size();
-            if (newDataSize <= 0) {
-                removeChild(beginIndex, pendingSetCount);
-            } else {
-                for (int i = 0; i < pendingSetCount && i < newDataSize; i++) {
-                    if (!isSameData(getChild(i + beginIndex), newChildList.get(i))) {
-                        updateChild(i + beginIndex, newChildList.get(i));
-                    }
+            for (int i = 0; i < pendingSetCount && i < newDataSize; i++) {
+                if (!isSameData(getChild(i + beginIndex), newChildList.get(i))) {
+                    updateChild(i + beginIndex, newChildList.get(i));
                 }
-                if (pendingSetCount > newDataSize) {
-                    clearChild(newDataSize);
-                } else if (pendingSetCount < newDataSize) {
-                    addChild(endIndex + 1, newChildList.subList(pendingSetCount,
-                            newDataSize));
-                }
+            }
+            if (pendingSetCount > newDataSize) {
+                clearChild(newDataSize);
+            } else if (pendingSetCount < newDataSize) {
+                addChild(endIndex + 1, newChildList.subList(pendingSetCount,
+                        newDataSize));
             }
         }
     }
@@ -1092,36 +1080,47 @@ public abstract class ExpandableAdapter<T> extends BaseExpandableAdapter<T> {
 
     public final void setFooter(List<T> newFooterList) {
         setFooter(0, mFooterCount > 0 ? mFooterCount - 1 : 0, newFooterList);
-    }
-
-    public final void setFooter(int beginIndex, List<T> newFooterList) {
-        setFooter(beginIndex, mFooterCount - 1, newFooterList);
+        /*int newDataSize = newFooterList == null ? 0 : newFooterList.size();
+        if (newDataSize <= 0) {
+            clearFooter();
+        } else if (mFooterCount <= 0) {
+            addFooter(newFooterList);
+        } else {
+            for (int i = 0; i < mFooterCount && i < newDataSize; i++) {
+                if (!isSameData(getFooter(i), newFooterList.get(i))) {
+                    updateFooter(i, newFooterList.get(i));
+                }
+            }
+            if (mFooterCount > newDataSize) {
+                clearFooter(newDataSize);
+            } else if (mFooterCount < newDataSize) {
+                addFooter(newFooterList.subList(mFooterCount, newDataSize));
+            }
+        }*/
     }
 
     public final void setFooter(int beginIndex, int endIndex, List<T> newFooterList) {
-        if (beginIndex < 0 || endIndex < 0) {
+        if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex) {
             L.GL.e("beginIndex %d, endIndex %d !!!", beginIndex, endIndex);
             return;
         }
-        if (beginIndex >= endIndex) {
+        int pendingSetCount = endIndex - beginIndex + 1;
+        int newDataSize = newFooterList == null ? 0 : newFooterList.size();
+        if (newDataSize <= 0) {
+            removeFooter(beginIndex, pendingSetCount);
+        } else if (mFooterCount <= beginIndex) {
             addFooter(newFooterList);
         } else {
-            int pendingSetCount = endIndex - beginIndex + 1;
-            int newDataSize = newFooterList == null ? 0 : newFooterList.size();
-            if (newDataSize <= 0) {
-                removeFooter(beginIndex, pendingSetCount);
-            } else {
-                for (int i = 0; i < pendingSetCount && i < newDataSize; i++) {
-                    if (!isSameData(getFooter(i + beginIndex), newFooterList.get(i))) {
-                        updateFooter(i + beginIndex, newFooterList.get(i));
-                    }
+            for (int i = 0; i < pendingSetCount && i < newDataSize; i++) {
+                if (!isSameData(getFooter(i + beginIndex), newFooterList.get(i))) {
+                    updateFooter(i + beginIndex, newFooterList.get(i));
                 }
-                if (pendingSetCount > newDataSize) {
-                    clearFooter(newDataSize);
-                } else if (pendingSetCount < newDataSize) {
-                    addFooter(endIndex + 1, newFooterList.subList(pendingSetCount,
-                            newDataSize));
-                }
+            }
+            if (pendingSetCount > newDataSize) {
+                clearFooter(newDataSize);
+            } else if (pendingSetCount < newDataSize) {
+                addFooter(endIndex + 1, newFooterList.subList(pendingSetCount,
+                        newDataSize));
             }
         }
     }
